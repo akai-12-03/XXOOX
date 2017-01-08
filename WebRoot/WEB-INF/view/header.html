@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>雄猫软件管理后台 v2.0</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="${admurl}${theme_dir}/rooms/bootstrap/css/bootstrap.min.css" media="all">
+	<link rel="stylesheet" href="${admurl}${theme_dir}/rooms/jquery-ui/themes/flick/jquery-ui.min.css" media="all">
+	<link rel="stylesheet" href="${admurl}${theme_dir}/rooms/jquery-ui/themes/flick/theme.css" media="all">
+	<link rel="stylesheet" href="${admurl}${theme_dir}/rooms/pace/themes/blue/pace-theme-flash.css" media="all">
+	<!-- <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/simditor/styles/font-awesome.css" media="all"> -->
+	<link rel="stylesheet" href="${admurl}${theme_dir}/rooms/simditor/styles/simditor.css" media="all">
+	<link rel='stylesheet' href='${admurl}${theme_dir}/rooms/sweetalert/sweetalert.css' media="all">
+	<link rel='stylesheet' href='${admurl}${theme_dir}/stylesheets/style.css' media="all">
+	<script>
+	var ROOT_URL = '${admurl}';
+	var urlConfig = {
+		'bnsearch': ROOT_URL + '/searchBorrower.html'
+	};
+	</script>
+	<!--[css patch]-->
+	<link rel="stylesheet" href="${admurl}/dist/css/admin.min.css">
+	<!--[end]-->
+	<!--[seajs]-->
+	<script src="${admurl}/dist/lib/jquery-1.11.2.min.js"></script>
+	<script src="${admurl}/dist/lib/sea.js"></script>
+	<script src="${admurl}/dist/js/config.js"></script>
+	<!--[end]-->
+
+	<!-- libraries -->
+	<!--
+	<script src="${admurl}${theme_dir}/rooms/jquery.min.js"></script>
+	-->
+
+	<script src="${admurl}${theme_dir}/rooms/bootstrap/js/bootstrap.min.js"></script>
+	<script src="${admurl}${theme_dir}/rooms/pace/pace.min.js"></script>
+	<script src="${admurl}${theme_dir}/rooms/jquery-ui/jquery-ui.min.js"></script>
+	<script src='${admurl}${theme_dir}/rooms/sweetalert/sweetalert.min.js'></script>
+
+	<!-- editor -->
+	<script src="${admurl}${theme_dir}/rooms/simditor/scripts/module.min.js"></script>
+	<script src="${admurl}${theme_dir}/rooms/simditor/scripts/hotkeys.min.js"></script>
+	<script src="${admurl}${theme_dir}/rooms/simditor/scripts/uploader.min.js"></script>
+	<script src="${admurl}${theme_dir}/rooms/simditor/scripts/simditor.min.js"></script>
+
+	<!-- common -->
+	<script src="${admurl}${theme_dir}/javascripts/common.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topbar-dropdown-menu">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="$admurl/admin/welcome.html" class="navbar-brand">$!currUser.username</a>
+				<a href="$admurl/index.html" class="navbar-brand">退出</a>
+			</div>
+	
+			<div class="collapse navbar-collapse" id="topbar-dropdown-menu">
+				<ul class="nav navbar-nav">
+			<!-- 		<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							配资管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/plan/record.html">配资记录</a></li>
+							<li><a href="${admurl}/admin/plan/append_record.html?status=0">追加保证金记录</a></li>
+						</ul>
+					</li> -->
+					<!-- <li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							融资管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/financ/financ_add.html">添加融资产品</a></li>
+							<li><a href="${admurl}/admin/financ/financ_list.html">融资列表</a></li>
+							<li><a href="${admurl}/admin/financ/financApply_list.html">申请融资列表</a></li>
+						</ul>
+					</li> -->
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							理财管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/borrow/opborrow_add.html">添加理财产品</a></li>
+							<li><a href="${admurl}/admin/borrow/list.html">理财列表</a></li>
+							<li><a href="${admurl}/admin/borrow/loanList.html">借款申请列表</a></li>
+						</ul>
+					</li>										
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							用户管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/member/webuser.html?ctype=web">前台用户列表</a></li>
+							<li><a href="${admurl}/admin/member/webuser.html?ctype=back">后台用户列表</a></li>
+							<li><a href="${admurl}/admin/member/userTenderAnalysis.html">前台用户投资统计</a></li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							资金管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/recharge_list.html">充值记录</a></li>
+<!-- 							<li><a href="${admurl}/admin/account/charge_offline.html">线下充值</a></li> -->
+<!-- 							<li><a href="${admurl}/admin/account/deduct_offline.html">线下扣款</a></li> -->
+							<li><a href="${admurl}/admin/withdraw_list.html">提现记录</a></li>
+							<li><a href="${admurl}/admin/account/account_list.html">用户资金详细记录</a></li>
+							<li><a href="${admurl}/admin/bankCard_list.html">用户银行卡管理</a></li>
+							<li><a href="${admurl}/admin/hongbao_list.html">红包使用记录</a></li>
+						</ul>
+					</li>
+					<!-- <li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							配资相关
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/plan/setshow.html">配资设定</a></li>
+							<li><a href="${admurl}/admin/plan/setshow.html">配资利率</a></li>
+						</ul>
+					</li> -->
+					<li class="dropdown">
+						<a href="${admurl}/admin/artlist.html">文章管理</a>
+					</li>
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" >
+							权限设置
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/auth/chgPass.html">更改密码</a></li>
+							<li><a href="${admurl}/admin/power/powerlist.html">权限列表</a></li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="${admurl}/admin/system/setting.html">系统设置</a>
+					</li>		
+					
+					<li class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+							还款管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="${admurl}/admin/borrow/jieBorrow.html?type=repayment">未还款项目</a></li>
+							<li><a href="${admurl}/admin/borrow/jieBorrow.html?type=repaymentyes">已还款项目</a></li>
+							<li><a href="${admurl}/admin/borrow/invite_list.html">推荐人列表</a></li>
+						</ul>
+					</li>											
+<!-- 					<li class="dropdown"> -->
+<!-- 						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button"> -->
+<!-- 							报表管理 -->
+<!-- 							<span class="caret"></span> -->
+<!-- 						</a> -->
+<!-- 						<ul class="dropdown-menu" role="menu"> -->
+<!-- 							<li><a href="${admurl}/admin/report/amoneyTotal.html">资金一览</a></li> -->
+<!-- 							<li><a href="${admurl}/borrow/borrowTender.html">用户投标明细</a></li> -->
+<!-- 							<li><a href="${admurl}/admin/moneyLog.html">用户充值明细</a></li> -->
+<!-- 							<li><a href="${admurl}/borrow/borrowlist.html">借款人情况</a></li> -->
+<!-- 							<li><a href="${admurl}/admin/tbqklist.html">投标情况</a></li> -->
+<!-- 						</ul> -->
+<!-- 					</li> -->
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="xmcontainer">

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserAccountLog" >
+  <typeAlias alias="userAccountLogAlias" type="com.dept.web.dao.model.UserAccountLog"/>
+  <resultMap id="userAccountLogResult" class="userAccountLogAlias" >
+    <result column="id" property="id"  />
+    <result column="id_related" property="idRelated"  />
+    <result column="user_id" property="userId"  />
+    <result column="type" property="type"  />
+    <result column="money_operate" property="moneyOperate"  />
+    <result column="money_total" property="moneyTotal"  />
+    <result column="money_usable" property="moneyUsable"  />
+    <result column="money_withdraw" property="moneyWithdraw"  />
+    <result column="money_insure" property="moneyInsure"  />
+    <result column="money_tender_freeze" property="moneyTenderFreeze"  />
+    <result column="money_collection" property="moneyCollection"  />
+    <result column="remark" property="remark"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="created_ip" property="createdIp"  />
+  </resultMap>
+  <resultMap id="userAccountLogSearchResult" class="userAccountLogAlias" extends="userAccountLogResult">
+  	<result column="USERNAME" property="username"  />
+  	<result column="REALNAME" property="realname"  />
+  	<result column="MOBILE" property="mobile"  />
+  </resultMap>
+  
+  <insert id="SAVE_USERACCOUNTLOG" parameterClass="userAccountLogAlias">
+  	  INSERT INTO TB_USER_ACCOUNT_LOG(id_related, user_id, type, money_operate, money_total, money_usable, money_withdraw, money_insure, 
+  	   remark, created_at, created_ip, money_tender_freeze, money_Collection)
+  	  VALUES (#idRelated#, #userId#, #type#, #moneyOperate#, #moneyTotal#, #moneyUsable#, #moneyWithdraw#, #moneyInsure#, #remark#, #createdAt#, #createdIp#, #moneyTenderFreeze#, #moneyCollection#)
+       <selectKey resultClass="long" >
+	  		SELECT LAST_INSERT_ID()
+	   </selectKey>
+  </insert>
+   <select id="GET_LIST_BY_FOR_SEARCH_ACCOUNTLOG" parameterClass="map" resultMap="userAccountLogSearchResult">
+	     SELECT A.*,B.username,B.realname,B.mobile FROM tb_user_account_log A,tb_user B WHERE A.user_id=B.id
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+		 	ORDER BY A.ID DESC
+   </select> 
+   
+   <select id="GET_COUNT_BY_FOR_SEARCH_ACCOUNTLOG" parameterClass="map" resultClass="int">
+	      SELECT  COUNT(0) FROM tb_user_account_log A,tb_user B WHERE A.user_id=B.id
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+   </select>    
+   
+ 
+</sqlMap>

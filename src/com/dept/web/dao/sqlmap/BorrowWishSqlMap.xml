@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="BorrowWish" >
+  <typeAlias alias="borrowWishAlias" type="com.dept.web.dao.model.BorrowWish"/>
+  <resultMap id="borrowWishResult" class="borrowWishAlias" >
+    <result column="id" property="id"  />
+    <result column="wish_money" property="wishMoney"  />
+    <result column="wish_apr" property="wishApr"  />
+    <result column="wish_Time" property="wishTime"  />
+    <result column="wish_use" property="wishUse"  />
+    <result column="wish_repay_style" property="wishRepayStyle"/>
+    <result column="user_phone" property="userPhone"/>
+    <result column="user_phone2" property="userPhone2"/>
+    <result column="user_Security" property="userSecurity"/>
+    <result column="user_Security2" property="userSecurity2"/>
+    <result column="user_home_address" property="userHomeAddress"/>
+    <result column="user_id" property="userId"/>
+    <result column="username" property="userName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="status" property="status"/>
+    <result column="realname" property="realname"/>
+  </resultMap>
+
+	<insert id="SAVE_BORROWWISH" parameterClass="borrowWishAlias">
+	insert into tb_borrow_wish (wish_money,wish_apr,wish_Time,wish_use,wish_repay_style,user_phone,user_phone2,
+		user_Security,user_Security2,user_home_address,user_id,username,create_time,status,realname)
+	values
+		(#wishMoney#,#wishApr#,#wishTime#,#wishUse#,#wishRepayStyle#,#userPhone#,#userPhone2#,
+		#userSecurity#,#userSecurity2#,#userHomeAddress#,#userId#,#userName#,#createTime#,#status#,#realname#)
+	<selectKey resultClass="long" >
+	  		SELECT LAST_INSERT_ID()
+	   </selectKey>
+	</insert>
+	
+	<select id="GET_COUNT_BY_SEARCHYUYUE" parameterClass="map"  resultClass="int">
+	  SELECT COUNT(0) FROM tb_borrow_wish
+	  <dynamic prepend="where">
+	 	  <isNotEmpty property="startTime" prepend="and">
+	 	      FROM_UNIXTIME(create_time,'%m-%d-%Y')>=#startTime#
+	 	  </isNotEmpty>
+	 	  <isNotEmpty property="endTime" prepend="and">
+	 	      <![CDATA[  
+	            FROM_UNIXTIME(create_time,'%m-%d-%Y')<= #endTime#  
+	          ]]> 
+	 	  </isNotEmpty>
+	 	   	  
+	  </dynamic>
+
+  </select>
+  
+  <select id="GET_LIST_BY_SEARCHYUYUE" parameterClass="map" resultMap="borrowWishResult">
+		SELECT * FROM tb_borrow_wish
+		  <dynamic prepend="where">
+		 	  <isNotEmpty property="startTime" prepend="and">
+		 	      FROM_UNIXTIME(create_time,'%m-%d-%Y')>=#startTime#
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="endTime" prepend="and">
+		 	      <![CDATA[  
+		            FROM_UNIXTIME(create_time,'%m-%d-%Y')<= #endTime#  
+		          ]]> 
+		 	  </isNotEmpty>
+		  </dynamic>	
+		ORDER BY ID DESC
+  </select>
+</sqlMap>

@@ -1,0 +1,39 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">报表管理</a></li>
+	  <li class="active">财务报表/资金一览</li>
+	</ol>		
+	<div class="">
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>发标总个数</th>
+					<th>发标总金额(元)</th>
+					<th>投标总金额(元)</th>
+					<th>线上充值总金额(元)</th>
+					<th>线下充值总金额(元)</th>
+					<th>提现总金额(元)</th>
+					<th>可用余额总金额(元)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>$!borrowCount</td>
+					<td>$!borrowMoneyCount</td>
+					<td>$!borrowMoneyCountYes</td>
+					<td>$!recharegeTotalMoney</td>
+					<td>$!recharegeTotalMoney2</td>
+					<td>$!withdrawTotalMoney</td>
+					<td>$!accountTotalMoney</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	
+	
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end	
+#footer()

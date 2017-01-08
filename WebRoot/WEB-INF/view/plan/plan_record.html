@@ -1,0 +1,92 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li class="active">配资记录</li>
+	</ol>
+	<ul class="nav nav-pills">
+	  <li role="presentation" #if(!$status) class="active" #end><a href="$admurl/admin/plan/record.html">分配账号</a></li>
+	  <li role="presentation" #if($!status==9) class="active" #end><a href="$admurl/admin/plan/record.html?status=beapproved">新建未支付</a></li>
+	  <li role="presentation" #if($!status==0) class="active" #end><a href="$admurl/admin/plan/record.html?status=running">支付待批准</a></li>
+	  <li role="presentation" #if($!status==1) class="active" #end><a href="$admurl/admin/plan/record.html?status=finished">已批准</a></li>
+	  <li role="presentation" #if($!status==5) class="active" #end><a href="$admurl/admin/plan/record.html?status=refuse">已拒绝</a></li>
+	</ul>
+	<br>
+	<div class="">
+		<form id="planForm" name="planForm" action="$admurl/admin/plan/record.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="status" name="status" value="$!status" />
+		<div class="form-group">
+		编号：
+	    <input type="text" class="form-control" placeholder="编号" name="pid" value="$!pid">		
+		用户名：
+	    <input type="text" class="form-control" placeholder="用户名" name="username" value="$!username">
+	    手机号：
+	    <input type="tel" class="form-control" placeholder="手机号" name="mobile" value="$!mobile">	
+      	</div>
+      	  <button type="submit" class="btn btn-default">搜索</button>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>配资编号</th>
+					<th>创建人</th>
+					<th>真实姓名</th>
+					<th>联系电话</th>
+					<th>配资类型</th>
+					<th>保证金</th>
+					<th>配资倍比</th>
+					<th>配资时间</th>
+					<th>配资利率/管理费</th>
+					<th>状态</th>
+					<th>开始时间</th>
+					<th>到期时间</th>
+					<th colspan="2">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($plan in ${planpage.result})  
+				<tr>
+					<td>$!plan.id</td>
+					<td>$!plan.username</td>
+					<td>$!plan.realname</td>
+					<td>$!plan.mobile</td>
+					<td>
+						#if($!plan.planType == 1) <font color="blue">按天配资</font>
+					    #elseif($!plan.planType == 2) <font color="#FF6600">按月配资 </font>
+					    #else <font color="red">免费体验</font>  #end 
+					</td>
+					<td>$!plan.moneyInsure</td>
+					<td>$!plan.power</td>
+					<td>$!plan.interval</td>
+					<td>#if($!plan.planType == 1) $!plan.moneyFee 元 / 天 #elseif($!plan.planType == 2) $!plan.rate 分 / 月 #else 免费 #end</td>
+					<td>#if($!plan.status == 0) 新建 #elseif($!plan.status == 9) 未支付 #elseif($!plan.status == 1) 批准 #elseif($!plan.status == 5) 已拒绝 #end</td>
+					<td>$!dateTool.dateStr($!plan.startTime, 'yyyy-MM-dd HH:mm')</td>
+					<td>#if($!plan.planType == 2)
+						$!dateTool.nDaysAfterOneDateString($!plan.endTime,-1)
+					#else
+						$!dateTool.dateStr($!plan.endTime, 'yyyy-MM-dd HH:mm')
+					#end
+					</td>
+					#if($!plan.status == 0 || $!plan.status == 1)
+					<td><a href="$admurl/admin/plan/updateRecord.html?pid=$!plan.id">分配</a></td>
+					#else
+					<td></td>
+					#end
+					#if($!plan.status == 0)
+					<td><a href="$admurl/admin/plan/refuseRecord.html?pid=$!plan.id">拒绝</a></td>
+					#else
+					<td></td>
+					#end
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($planpage 'planForm')
+		
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end		
+#footer()

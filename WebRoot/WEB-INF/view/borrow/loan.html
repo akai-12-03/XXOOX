@@ -1,0 +1,147 @@
+#header()
+	<link href="${weburl}${theme_dir}/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="${weburl}${theme_dir}/umeditor/third-party/jquery.min.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="${weburl}${theme_dir}/umeditor/umeditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="${weburl}${theme_dir}/umeditor/umeditor.min.js"></script>    
+    <script type="text/javascript">
+    //实例化编辑器
+    var um = UM.getEditor('content');
+    </script>
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">理财管理</a></li>
+	</ol>
+	<div class="">
+		<form id="verifyForm" class="form-horizontal" action="$admurl/admin/borrow/doAuditLoan.html" method="post">
+		  <input type="hidden" id="id" name="id" value="$!loan.id">
+		  <input type="hidden" id="status" name="status">
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">真实姓名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!loan.realname</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">联系方式</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!loan.phone</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">状态</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">
+						#if($!loan.status==0)
+							 未审核
+						#elseif($!loan.status==1)
+							审核通过
+						#else
+							审核不通过
+						#end</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否有车</label>
+		    <div class="col-sm-3">
+		      	<p class="form-control-static">
+		      			#if($!loan.carStatus==0)
+							有车
+						#else
+							无车
+						#end</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">添加时间</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!dateTool.dateStr2($!loan.addtime, 'yyyy-MM-dd HH:mm:ss')</p>
+		    </div>
+		  </div>		  		  		  		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">审核备注</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="remark" name="remark" >
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="agree">通过</button>
+		      <button type="button" class="btn btn-primary" id="noagree">不通过</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	
+	<script type="text/javascript">
+		$("#agree").click(function(){
+			
+			swal({
+				  title: "您确定审核通过吗？",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+	
+					var remark = $('#remark').val();
+					
+					if(remark === ''){
+						
+						swal("请输入审核说明");
+						
+						return false;
+					}else{
+						
+						$("#status").val(1);
+						
+						$("#verifyForm").submit();
+					}
+				  
+				 // 
+				});
+		});	
+		
+		$("#noagree").click(function(){
+			
+			swal({
+				  title: "您确定审核不通过吗？",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+
+					var remark = $('#remark').val();
+					
+					if(remark === ''){
+						
+						swal("请输入审核说明");
+						
+						return false;
+					}else{
+						
+						$("#status").val(2);
+						
+						$("#verifyForm").submit();
+					}
+				  
+				 // 
+				});
+		});	
+	</script>	
+	
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+#footer()

@@ -1,0 +1,57 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">还款管理</a></li>
+	  <li class="active">已还款列表</li>
+	</ol>
+<!------------------内容区------------------->
+<div class="">
+		<form id="borrowForm" name="borrowForm" action="${admurl}/admin/borrow/jieBorrow.html" class="navbar-form">
+		<input type="hidden" id="type" name="type" value="$!type" />
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		  <div class="form-group">
+	              还款人：
+	      <input type="text" class="form-control" style="width: 180px" placeholder="还款人" id="username" name="username" value="$!username">
+	              项目名称：		  
+	      <input type="text" class="form-control" style="width: 180px" placeholder="项目名称" id="borrowname" name="borrowname" value="$!borrowname">
+      	  </div>
+      	  &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>&nbsp;&nbsp;&nbsp;<a  id="excel_borrow"  class="btn btn-default"> 导出Excel</a>
+	    <br>
+	    <br>
+	<table class="table table-bordered table-hover">
+			<thead>
+			<tr>
+			<td class="pure-table-title">编号</td>
+			<td class="pure-table-title">项目名称</td>
+			<td class="pure-table-title">还款人</td>
+			<td class="pure-table-title">还款金额</td>
+			<td class="pure-table-title">还款时间</td>
+			<td class="pure-table-title">已还利息</td>
+			</tr>
+			</thead> 	                                                                                                    	                           	        
+		<tbody>
+           	#foreach($borrow in ${borrowPage.result})  
+        <tr>
+            <td>$!index</td>
+            <td>$!borrow.borrowname</td>
+            <td>$!borrow.username</td>
+            <td>$!borrow.repaymentYesaccount</td>
+            <td>$!timeTool.getStr($!borrow.repaymentYestime)</td>
+            <td>$!borrow.interest</td>
+         </tr>
+            #end
+         </tbody>
+	</table>
+	    #pagination($borrowPage 'borrowForm')
+	</form>
+	<script type="text/javascript">
+		$("#excel_borrow").click(function(){
+			var type=$("#type").val();
+			var username=$("#username").val();
+			var borrowname=$("#borrowname").val();
+			this.href="${admurl}/admin/borrow_excel.html?username="+username+"&type="+type+"&borrowname="+borrowname+"&eType=jieBorrow";
+		});
+	</script>
+</div>
+<!-------------------------页脚------------------------>
+#footer()

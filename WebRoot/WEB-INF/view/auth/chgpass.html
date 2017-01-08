@@ -1,0 +1,70 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">权限管理</a></li>
+	  <li class="active">更改密码</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/auth/chgPass.html?opt=upd" method="post" id="passform" name="passform">
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!aduser.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">原密码</label>
+		    <div class="col-sm-3">
+		      <input type="password" class="form-control" id="password" name="password">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">新密码</label>
+		    <div class="col-sm-3">
+		      <input type="password" class="form-control" id="newpassword" name="newpassword">
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">确认新密码</label>
+		    <div class="col-sm-3">
+		      <input type="password" class="form-control" id="newpasswordr" name="newpasswordr">
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="upbut">更新</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+	<script type="text/javascript">
+		$('#upbut').click(function(){
+			
+			var newpassword = $("#newpassword").val();
+			var newpasswordr = $("#newpasswordr").val();
+			
+			if(newpassword.length >=6 && newpassword.length <= 10){
+				
+				if(newpasswordr==newpassword){
+					
+					$("#passform").submit();
+					
+				}else{
+					
+					swal("密码不一致！");
+				}
+				
+			}else{
+				
+				swal("请输入6-10位的密码");
+			}
+			
+		});
+	</script>	
+	
+#footer()

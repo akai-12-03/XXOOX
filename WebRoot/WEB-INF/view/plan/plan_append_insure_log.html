@@ -1,0 +1,73 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li>配资记录</li>
+	  <li class="active">追加保证金</li>
+	</ol>
+	<ul class="nav nav-pills">
+	  <li role="presentation" #if($!status==0) class="active" #end><a href="${admurl}/admin/plan/append_record.html?status=0">支付待批准</a></li>
+	  <li role="presentation" #if($!status==1) class="active" #end><a href="${admurl}/admin/plan/append_record.html?status=1">已批准</a></li>
+	  <li role="presentation" #if($!status==9) class="active" #end><a href="${admurl}/admin/plan/append_record.html?status=9">已拒绝</a></li>
+	</ul>
+	<br>
+	<div class="">
+		<form id="planForm" name="planForm" action="$admurl/admin/plan/append_record.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="status" name="status" value="$!status" />
+		  <div class="form-group">
+		  配资编号：
+	      <input type="text" class="form-control" style="width: 100px" placeholder="编号" name="reid" value="$!reid">		  
+		  用户名：
+	      <input type="text" class="form-control" style="width: 150px" placeholder="用户名" name="username" value="$!username">
+	      真实姓名：
+	      <input type="text" class="form-control" style="width: 150px" placeholder="真实姓名" name="realname" value="$!realname">
+	      开始时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="开始时间" name="startTime" value="$!startTime">	
+      	  结束时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="结束时间" name="endTime" value="$!endTime">	
+      	  </div>
+      	  &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>配资编号</th>
+					<th>产品类型</th>
+					<th>用户名</th>
+					<th>真实姓名</th>
+					<th>手机号</th>
+					<th>配资金额（元）</th>
+					<th>原保证金</th>
+					<th>利率或管理费</th>
+					<th>已追加保证金</th>
+					<th>追加时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($plan in ${appendpage.result})  
+				<tr>
+					<td>$!plan.planRecordId</td>
+					<td>#if($!plan.planType == 1) 按天配资 #elseif($!plan.planType == 2) 按月配资 #else 免费体验 #end </td>
+					<td>$!plan.username</td>
+					<td>$!plan.realname</td>
+					<td>$!plan.mobile</td>
+					<td>$!plan.moneyOp</td>
+					<td>$!plan.oldMoneyInsure</td>
+					<td>#if($!plan.planType == 1) $!plan.moneyFee 元 / 天 #elseif($!plan.planType == 2) $!plan.rate 分 / 月 #else 免费 #end</td>
+					<td>$!plan.moneyInsure</td>
+					<td>$!dateTool.dateStr($!plan.createdAt, 'yyyy-MM-dd HH:mm')</td>
+					<td>#if($!plan.status == 0) <a href="$admurl/admin/plan/updateAppend.html?pid=$!plan.id">审核</a> #elseif($!plan.status == 1) 已批准 #else 已拒绝 #end</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($appendpage 'planForm')
+		
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end		
+#footer()

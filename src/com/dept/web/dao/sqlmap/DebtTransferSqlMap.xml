@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="DebtTransfer" >
+  <typeAlias alias="debtTransferAlias" type="com.dept.web.dao.model.DebtTransfer"/>
+  <resultMap id="debtTransferResult" class="debtTransferAlias" >
+    <result column="id" property="id"  />
+    <result column="borrow_id" property="borrowId"  />
+    <result column="tender_id" property="tenderId"  />
+    <result column="tender_user_id" property="tenderUserId"  />
+    <result column="transfer_Price" property="transferPrice"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="created_By" property="createdBy"  />  
+    <result column="update_At" property="updateAt"  />
+    <result column="update_By" property="updateBy"  />                
+  </resultMap>
+</sqlMap>

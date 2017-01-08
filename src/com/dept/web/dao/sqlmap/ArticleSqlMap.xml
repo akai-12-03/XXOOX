@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Article" >
+  <typeAlias alias="articleAlias" type="com.dept.web.dao.model.Article" />
+  <resultMap id="articleResult" class="articleAlias" >
+    <result column="id" property="id"  />
+    <result column="site_id" property="siteId"  />
+    <result column="name" property="name"  />
+    <result column="littitle" property="littitle"  />
+    <result column="status" property="status"  />
+    <result column="litpic" property="litpic"  />
+    <result column="flag" property="flag"  />
+    <result column="source" property="source"  />
+    <result column="publish" property="publish"  />
+    <result column="is_jump" property="isJump"  />
+    <result column="author" property="author"  />
+    <result column="jumpurl" property="jumpurl"  />
+    <result column="summary" property="summary"  />
+    <result column="a_order" property="aorder"  />
+    <result column="hits" property="hits"  />
+    <result column="comment" property="comment"  />
+    <result column="is_comment" property="isComment"  />
+    <result column="user_id" property="userId"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="updated_at" property="updatedAt"  />
+    <result column="content" property="content"/>
+  </resultMap>
+  
+  <resultMap id="articleSearchResult" class="articleAlias" extends="articleResult">
+  	<result property="siteName" column="SITENAME"/>
+  	<result property="userName" column="USERNAME"/>
+  </resultMap>
+
+  <select id="GET_BY_ID" parameterClass="Long" resultMap="articleResult">
+       SELECT * FROM TB_ARTICLE WHERE ID =  #value#
+  </select>
+  
+  <select id="GET_LIST_BY_INDEX" parameterClass="map" resultMap="articleResult">
+       SELECT * FROM TB_ARTICLE WHERE SITE_ID IN (SELECT ID FROM TB_SITE WHERE NID = #nid# AND PID > 0)
+	   ORDER BY A_ORDER ASC LIMIT #start#,#end#
+  </select>
+  
+  <insert id="SAVE_ARTICLE" parameterClass="articleAlias">
+  	   INSERT INTO TB_ARTICLE(SITE_ID, NAME,LITTITLE,`STATUS`,LITPIC,FLAG,SOURCE,PUBLISH,IS_JUMP,AUTHOR,JUMPURL,SUMMARY,A_ORDER,HITS,COMMENT,IS_COMMENT,USER_ID,CREATED_AT,UPDATED_AT,CONTENT)
+  	   VALUES(#siteId#, #name#, #littitle#, #status#, #litpic#, #flag#, #source#, #publish#, #isJump#, #author#, #jumpurl#, #summary#, #aorder#, #hits#, #comment#, #isComment#, #userId#, #createdAt#, #updatedAt#, #content#)
+		 <selectKey resultClass="long" >
+  			SELECT LAST_INSERT_ID()
+   	     </selectKey>
+  </insert>
+
+  <select id="GET_COUNT_BY_SEARCH" parameterClass="map"  resultClass="int">
+	  SELECT COUNT(0) FROM TB_ARTICLE A, TB_SITE B WHERE A.SITE_ID = B.ID
+      <isNotEmpty property="title" prepend="and">
+     	  A.NAME LIKE CONCAT('%', #title#, '%')
+      </isNotEmpty>
+ 	  <isNotEmpty property="startTime" prepend="and">
+ 	      FROM_UNIXTIME(A.PUBLISH,'%m\/%d\/%Y')>=#startTime#
+ 	  </isNotEmpty>
+ 	  <isNotEmpty property="endTime" prepend="and">
+ 	      <![CDATA[  
+            FROM_UNIXTIME(A.PUBLISH,'%m\/%d\/%Y')<= #endTime#  
+          ]]> 
+ 	  </isNotEmpty>	  
+ 		<isNotEmpty property="siteName" prepend="and">
+	     	  B.NAME LIKE CONCAT('%', #siteName#, '%')
+	      </isNotEmpty>
+  </select>
+  
+  <select id="GET_LIST_BY_SEARCH" parameterClass="map" resultMap="articleSearchResult">
+		SELECT A.*, B.NAME AS SITENAME, C.USERNAME FROM TB_ARTICLE A LEFT JOIN TB_USER C ON C.ID = A.USER_ID, TB_SITE B WHERE A.SITE_ID = B.ID
+	      <isNotEmpty property="title" prepend="and">
+	     	  A.NAME LIKE CONCAT('%', #title#, '%')
+	      </isNotEmpty>
+	 	  <isNotEmpty property="startTime" prepend="and">
+	 	      FROM_UNIXTIME(A.PUBLISH,'%m\/%d\/%Y')>=#startTime#
+	 	  </isNotEmpty>
+	 	  <isNotEmpty property="endTime" prepend="and">
+	 	      <![CDATA[  
+	            FROM_UNIXTIME(A.PUBLISH,'%m\/%d\/%Y')<= #endTime#  
+	          ]]> 
+	 	  </isNotEmpty>	
+	 	  	<isNotEmpty property="siteName" prepend="and">
+	     	  B.NAME LIKE CONCAT('%', #siteName#, '%')
+	      </isNotEmpty>
+		ORDER BY ID DESC
+  </select>
+  
+  <update id="UPDATE_ARTICLE" parameterClass="articleAlias">
+  	  UPDATE TB_ARTICLE
+  	  <dynamic prepend="set">
+  	    <isNotNull property="siteId" prepend=",">
+  	    	SITE_ID = #siteId#
+  	    </isNotNull>
+   	    <isNotNull property="name" prepend=",">
+  	    	NAME = #name#
+  	    </isNotNull> 
+  	    <isNotNull property="littitle" prepend=",">
+  	    	LITTITLE = #littitle#
+  	    </isNotNull>
+   	    <isNotNull property="status" prepend=",">
+  	    	`STATUS` = #status#
+  	    </isNotNull>
+   	    <isNotNull property="litpic" prepend=",">
+  	    	LITPIC = #litpic#
+  	    </isNotNull>
+   	    <isNotNull property="flag" prepend=",">
+  	    	FLAG = #flag#
+  	    </isNotNull> 
+  	    <isNotNull property="source" prepend=",">
+  	    	SOURCE = #source#
+  	    </isNotNull>
+   	    <isNotNull property="publish" prepend=",">
+  	    	PUBLISH = #publish#
+  	    </isNotNull>
+  	    <isNotNull property="isJump" prepend=",">
+  	    	IS_JUMP = #isJump#
+  	    </isNotNull>
+   	    <isNotNull property="author" prepend=",">
+  	    	AUTHOR = #author#
+  	    </isNotNull> 
+  	    <isNotNull property="jumpurl" prepend=",">
+  	    	JUMPURL = #jumpurl#
+  	    </isNotNull>
+   	    <isNotNull property="summary" prepend=",">
+  	    	SUMMARY = #summary#
+  	    </isNotNull>
+  	    <isNotNull property="aorder" prepend=",">
+  	    	A_ORDER = #aorder#
+  	    </isNotNull>
+   	    <isNotNull property="hits" prepend=",">
+  	    	HITS = #hits#
+  	    </isNotNull> 
+  	    <isNotNull property="comment" prepend=",">
+  	    	COMMENT = #comment#
+  	    </isNotNull>
+   	    <isNotNull property="isComment" prepend=",">
+  	    	IS_COMMENT = #isComment#
+  	    </isNotNull>
+  	    <isNotNull property="userId" prepend=",">
+  	    	USER_ID = #userId#
+  	    </isNotNull>
+   	    <isNotNull property="createdAt" prepend=",">
+  	    	CREATED_AT = #createdAt#
+  	    </isNotNull>
+  	    <isNotNull property="updatedAt" prepend=",">
+  	    	UPDATED_AT = #updatedAt#
+  	    </isNotNull>
+   	    <isNotNull property="content" prepend=",">
+  	    	`CONTENT` = #content#
+  	    </isNotNull>  	      	       	     	     	    	  
+  	  </dynamic>
+  	  WHERE ID = #id#
+  </update>
+  
+</sqlMap>

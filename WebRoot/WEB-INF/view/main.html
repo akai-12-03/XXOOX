@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/semantic-ui/semantic.min.css" media="all">
+  <link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/jquery-ui/themes/flick/jquery-ui.min.css" media="all">
+  <link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/jquery-ui/themes/flick/theme.css" media="all">
+  <link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/pace/themes/blue/pace-theme-flash.css" media="all">
+  <link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/simditor/styles/font-awesome.css" media="all">
+  <link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/simditor/styles/simditor.css" media="all">
+  <link rel='stylesheet' href='${admurl}/${theme_dir}/stylesheets/style.css' media="all">
+</head>
+<body>
+  <div class="xmsign">
+    <div class="ui page grid">
+      <div class="column ui">
+      <form action="${admurl}/admin/system/update.html" method="post">
+      <input type="hidden" name="type" value="$!type">
+      <table>
+		#foreach($!systems in $!sysInfo)
+		<tr>
+			<td>$!systems.name</td>
+			<td><input type="text" name="value$!{systems.id}" value="$!systems.value"></td>
+			<td>$!systems.nid</td>
+		</tr>
+		#end
+		<tr>
+			<td colspan="3" align="center"><input type="submit" value="确认修改"></td>
+		</tr>
+		</table>
+		</form>
+      </div>
+    </div>
+  </div>
+
+  <!-- libraries -->
+  <script src="${admurl}/${theme_dir}/rooms/jquery.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/pace/pace.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/semantic-ui/semantic.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/jquery-ui/jquery-ui.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/angular.min.js"></script>
+
+  <!-- editor -->
+  <script src="${admurl}/${theme_dir}/rooms/simditor/scripts/module.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/simditor/scripts/hotkeys.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/simditor/scripts/uploader.min.js"></script>
+  <script src="${admurl}/${theme_dir}/rooms/simditor/scripts/simditor.min.js"></script>
+
+  <!-- common -->
+  <script src="${admurl}/${theme_dir}/javascripts/common.js"></script>
+</body>
+</html>

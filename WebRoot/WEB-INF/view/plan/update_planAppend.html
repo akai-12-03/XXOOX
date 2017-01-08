@@ -1,0 +1,116 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">配资管理</a></li>
+	  <li><a href="#">追加保证金记录</a></li>
+	  <li class="active">审核追加保证金</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" name="appform" id="appform" action="$admurl/admin/plan/updateAppend.html?opt=agree&pid=$!pai.id" method="post">
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label">配资编号</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!pai.planRecordId</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label">配资类型</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">#if($!pai.planType==1) 按天配资 #elseif($!pai.planType==2) 按月配资 #elseif($!pai.planType==3) 免费体验  #end</p>
+		    </div>
+		  </div>	
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">真实姓名</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.realname</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">手机号</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.mobile</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">配资金额</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.moneyOp</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">原保证金</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.oldMoneyInsure</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">追加保证金</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.moneyInsure</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">追加时间</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!dateTool.dateStr($!pai.createdAt, 'yyyy-MM-dd HH:mm')</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="agree">批准</button>
+		      <button type="button" class="btn btn-primary" id="noagree">拒绝</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		$("#agree").click(function(){
+			
+			swal({
+				  title: "您确定批准吗？",
+				  text: "追加保证金金额为: "+$!pai.moneyInsure+ " 元",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+	
+					$("#appform").submit();
+				  
+				 // 
+				});
+		});	
+		
+		
+		$("#noagree").click(function(){
+			
+			swal({
+				  title: "您确定拒绝吗？",
+				  text: "拒绝追加保证金金额为: "+$!pai.moneyInsure+ " 元",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+					$("#appform").attr("action", "$admurl/admin/plan/updateAppend.html?opt=noagree&pid=$!pai.id");
+					$("#appform").submit();
+				 // 
+				});
+		});
+			
+	</script>	
+#footer()

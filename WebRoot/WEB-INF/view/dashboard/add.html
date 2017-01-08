@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN" ng-app>
+<head>
+	<title>{{title}}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="public/rooms/semantic-ui/semantic.min.css" media="all">
+	<link rel="stylesheet" href="public/rooms/jquery-ui/themes/flick/jquery-ui.min.css" media="all">
+	<link rel="stylesheet" href="public/rooms/jquery-ui/themes/flick/theme.css" media="all">
+	<link rel="stylesheet" href="public/rooms/pace/themes/blue/pace-theme-flash.css" media="all">
+	<link rel="stylesheet" href="public/rooms/simditor/styles/font-awesome.css" media="all">
+	<link rel="stylesheet" href="public/rooms/simditor/styles/simditor.css" media="all">
+	<link rel='stylesheet' href='public/stylesheets/style.css' media="all">
+</head>
+<body>
+	{{> dashboard_topbar }}
+
+	<div class="pusher">
+		<form class="ui page grid" method="post" action="/dashboard/article/add">
+			<div class="twelve wide column">
+				<div class="form ui segment tall stacked">
+					{{#showTip msg}}
+					{{/showTip}}
+					<header class="ui blue header">
+						<h2>
+							添加新文章
+						</h2>
+					</header>
+					<div class="field required">
+						<label>标题</label>
+						<input type="text" name="title" required>
+					</div>
+					<div class="field required">
+						<label>内容</label>
+						<textarea id="full-editor" name="content" autofocus required></textarea>
+					</div>
+					<div class="ui buttons">
+						<a href="/dashboard" class="ui button red">不要了</a>
+						<div class="or" data-text="或"></div>
+						<button class="ui button blue">保存</button>
+					</div>
+				</div>
+			</div>
+			
+			<aside class="four wide column">
+				<div class="ui segment blue">
+					<div class="form ui">
+						<div class="field">
+							<label class="ui label teal">发布日期</label>
+							<input type="text" class="xmdate" name="date">
+						</div>
+						<div class="field">
+							<label class="ui label teal">分类</label>
+							<input type="text" name="category">
+						</div>
+						<div class="field">
+							<label class="ui label teal">作者</label>
+							<input type="text" name="author" value="{{ user.name }}">
+						</div>
+					</div>
+				</div>
+			</aside>
+		</form>
+	</div>
+
+	<!-- libraries -->
+	<script src="/rooms/jquery.min.js"></script>
+	<script src="/rooms/pace/pace.min.js"></script>
+	<script src="/rooms/semantic-ui/semantic.min.js"></script>
+	<script src="/rooms/jquery-ui/jquery-ui.min.js"></script>
+	<script src="/rooms/angular.min.js"></script>
+
+	<!-- editor -->
+	<script src="/rooms/simditor/scripts/module.min.js"></script>
+	<script src="/rooms/simditor/scripts/hotkeys.min.js"></script>
+	<script src="/rooms/simditor/scripts/uploader.min.js"></script>
+	<script src="/rooms/simditor/scripts/simditor.min.js"></script>
+
+	<!-- common -->
+	<script src="/javascripts/common.js"></script>
+</body>
+</html>

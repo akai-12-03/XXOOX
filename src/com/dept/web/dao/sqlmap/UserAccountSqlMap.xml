@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserAccount" >
+  <typeAlias alias="userAccountAlias" type="com.dept.web.dao.model.UserAccount"/>
+  <resultMap id="userAccountResult" class="userAccountAlias" >
+    <result column="id" property="id"  />
+    <result column="user_id" property="userId"  />
+    <result column="money_total" property="moneyTotal"  />
+    <result column="money_usable" property="moneyUsable"  />
+    <result column="money_withdraw" property="moneyWithdraw"  />
+    <result column="money_insure" property="moneyInsure"  />
+    <result column="profits_total" property="profitsTotal"  />
+    <result column="money_tender_freeze" property="moneyTenderFreeze"  />
+    <result column="money_collection" property="moneyCollection"  />    
+    <result column="created_at" property="createdAt"  />
+    <result column="updated_at" property="updatedAt"  />
+  </resultMap>
+  
+   <resultMap id="userAccountSearchResult" class="userAccountAlias" extends="userAccountResult">
+  	  <result column="username" property="username"  />
+  	  <result column="realname" property="realName"  />
+  	  <result column="mobile" property="phone"  />
+  	  <result column="profits_total" property="profitsTotal"  />
+  	  <result column="money_collection" property="moneyCollection"  />
+  	  <result column="money_tender_freeze" property="moneyTenderFreeze"  />
+   </resultMap>
+   
+   <resultMap id="userAccountByUserMoneyTotalResult" class="userAccountAlias" >
+  	  <result column="totalMoney" property="totalMoney"  />
+   </resultMap>
+  
+   <select id="GET_BY_USERID" parameterClass="long" resultMap="userAccountResult">
+		<![CDATA[
+		SELECT * FROM tb_user_account WHERE USER_ID = #value#
+		]]>
+	</select>
+	
+	<select id="GET_BY_USERACCOUNT_USERMONEY_TOTAL" parameterClass="userAccountAlias" resultMap="userAccountByUserMoneyTotalResult">
+  	select SUM(money_usable) as totalMoney from tb_user_account 
+  </select> 
+
+   <select id="GET_BY_USERID_FOR_OFFLINE" parameterClass="long" resultMap="userAccountSearchResult">
+		<![CDATA[
+		SELECT A.*, B.USERNAME, B.REALNAME, B.MOBILE FROM TB_USER_ACCOUNT A, TB_USER B WHERE A.USER_ID = #value# AND A.USER_ID = B.ID
+		]]>
+	</select>
+    <select id="GET_LIST_BY_FOR_RECHARGE_SEARCH"  parameterClass="map" resultMap="userAccountSearchResult">
+       SELECT A.*, B.USERNAME, B.REALNAME,A.profits_total,A.money_collection,A.money_tender_freeze,B.MOBILE FROM TB_USER_ACCOUNT A, TB_USER B WHERE A.USER_ID = B.ID
+      	<isNotEmpty property="username" prepend="and">
+      		USERNAME LIKE CONCAT('%', #username#, '%')
+      	</isNotEmpty>
+        <isNotEmpty property="realname" prepend="and">
+    		REALNAME LIKE CONCAT('%', #realname#, '%')
+        </isNotEmpty>
+   	    <isNotEmpty  property="mobile" prepend="and">
+   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+  	    </isNotEmpty> 
+  	    <isNotEmpty  property="userId" prepend="and">
+   			user_id LIKE CONCAT('%', #userId#, '%')
+  	    </isNotEmpty> 
+    </select>
+    
+    <select id="GET_COUNT_BY_FOR_RECHARGE_SEARCH"  parameterClass="map" resultClass="int">
+       SELECT COUNT(0) FROM TB_USER_ACCOUNT A, TB_USER B WHERE A.USER_ID = B.ID
+      	<isNotEmpty property="username" prepend="and">
+      		USERNAME LIKE CONCAT('%', #username#, '%')
+      	</isNotEmpty>
+        <isNotEmpty property="realname" prepend="and">
+    		REALNAME LIKE CONCAT('%', #realname#, '%')
+        </isNotEmpty>
+   	    <isNotEmpty  property="mobile" prepend="and">
+   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+  	    </isNotEmpty> 
+  	     <isNotEmpty  property="userId" prepend="and">
+   			user_id LIKE CONCAT('%', #userId#, '%')
+  	    </isNotEmpty> 
+    </select>    	
+	 
+  <insert id="SAVE_USERACCOUNT" parameterClass="userAccountAlias" >
+    insert into tb_user_account(user_id,money_total,money_usable,money_withdraw,money_insure,
+    profits_total,created_at,updated_at, money_tender_freeze, money_collection)
+    values
+    (#userId#,#moneyTotal#,#moneyUsable#,#moneyWithdraw#,#moneyInsure#,#profitsTotal#,
+    #createdAt#,#updatedAt#, #moneyTenderFreeze#, #moneyCollection#)
+    <selectKey resultClass="long" >
+	  		SELECT LAST_INSERT_ID()
+	   </selectKey>
+  </insert>
+  
+  <update id="UPDATE_ACCOUNT_BY_VERIFY" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_total = money_total + #interest#,
+	 	money_Tender_Freeze = money_Tender_Freeze - #money#,
+	 	money_collection = money_collection + #interest# + #money#
+  	 WHERE USER_ID = #userId#
+  </update>
+
+  <update id="UPDATE_ACCOUNT_BY_AWARD" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_total = money_total + #money#,
+	 	money_usable = money_usable + #money#
+  	 WHERE USER_ID = #userId#
+  </update>
+  
+  <update id="UPDATE_ACCOUNT_BY_BORROWER" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_total = money_total + #money#,
+	 	money_usable = money_usable + #money#
+  	 WHERE USER_ID = #userId#
+  </update>
+  
+  <update id="UPDATE_ACCOUNT_BY_REPAYMENT_UNFREEZE" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_total = money_total - #money#,
+	 	money_Tender_Freeze = money_Tender_Freeze - #money#
+  	 WHERE USER_ID = #userId#
+  </update>
+  
+  <update id="UPDATE_ACCOUNT_BY_REPAYMENT" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_usable = money_usable + #money#,
+	 	money_collection = money_collection - #money#
+  	 WHERE USER_ID = #userId#
+  </update>  
+  
+    <update id="UPDATE_ACCOUNT_TENDER_UNFREEZE" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_usable = money_usable + #money#,
+	 	money_Tender_Freeze = money_Tender_Freeze - #money#
+  	 WHERE USER_ID = #userId#
+  </update>   
+  
+  <update id="UPDATE_USERACCOUNT" parameterClass="userAccountAlias">
+  	UPDATE TB_USER_ACCOUNT
+  	<dynamic prepend="set">
+  		<isNotNull property="moneyTotal" prepend=",">
+  			money_total = #moneyTotal#
+  		</isNotNull>
+  		<isNotNull property="moneyUsable" prepend=",">
+  			money_usable = #moneyUsable#
+  		</isNotNull>
+  		<isNotNull property="moneyWithdraw" prepend=",">
+  			money_withdraw = #moneyWithdraw#
+  		</isNotNull>
+  		<isNotNull property="moneyInsure" prepend=",">
+  			money_insure = #moneyInsure#
+  		</isNotNull>
+  		<isNotNull property="profitsTotal" prepend=",">
+  			profits_total = #profitsTotal#
+  		</isNotNull>
+  		<isNotNull property="createdAt" prepend=",">
+  			created_at = #createdAt#
+  		</isNotNull>
+  		<isNotNull property="updatedAt" prepend=",">
+  			updated_at = #updatedAt#
+  		</isNotNull>
+  		<isNotNull property="moneyTenderFreeze" prepend=",">
+  			money_Tender_Freeze = #moneyTenderFreeze#
+  		</isNotNull>
+  		<isNotNull property="moneyCollection" prepend=",">
+  			money_collection = #moneyCollection#
+  		</isNotNull>  		 		
+  	</dynamic>
+  	WHERE USER_ID = #userId# and ID = #id#  
+  </update>  
+   <update id="UPDATE_UPDATE_ACCOUNT_NOT_ZERO" parameterClass="userAccountAlias">
+		<![CDATA[
+			update tb_user_account set money_total=money_total+#moneyTotal#,money_usable=money_usable+#moneyUsable#,money_Tender_Freeze=money_Tender_Freeze+#moneyTenderFreeze# where user_id=#userId# 
+		]]>
+	</update>
+	
+	 <update id="UPDATE_ACCOUNT_BY_REPAYMENTMONEY" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_total = money_total - #money#
+  	 WHERE USER_ID = #userId#
+  </update>
+  
+  <update id="UPDATE_ACCOUNT_BY_REPAYMENTFREEZE" parameterClass="Map">
+  	 UPDATE TB_USER_ACCOUNT SET UPDATED_AT = #nowd#,
+	 	money_Tender_Freeze = money_Tender_Freeze - #money#
+  	 WHERE USER_ID = #userId#
+  </update>
+</sqlMap>

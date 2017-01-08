@@ -1,0 +1,99 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">用户管理</a></li>
+	  <li class="active">后台用户列表</li>
+	</ol>
+	<p>
+		<a href="$admurl/admin/member/createbackuser.html"><button type="button" class="btn btn-success" >创建后台用户</button></a>
+	</p>
+	<div class="">
+		<form id="userForm" name="userForm" action="$admurl/admin/member/webuser.html">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="ctype" name="ctype" value="$!ctype" />
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名</th>
+					<th>用户状态</th>
+					<th>手机号</th>
+					<th>邮箱</th>
+					<th>创建用户时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($user in ${userpage.result})  
+				<tr>
+					<td>$!user.id</td>
+					<td>$!user.username</td>
+					#if($!user.status==10)
+					<td>正常</td>
+					#else
+					<td>已停用</td>
+					#end
+					<td>$!user.mobile</td>
+					<td>$!user.email</td>
+					<td>$dateTool.dateStr($!user.createdAt, 'yyyy-MM-dd')</td>
+					#if($!user.status=='10')
+					<td><a href="$admurl/admin/member/createbackuser.html?ctype=update&uid=$!user.id">修改</a> / <a href="#" class="link" data-status="stop">停用</a></td>
+					#else
+					<td><a href="$admurl/admin/member/createbackuser.html?ctype=update&uid=$!user.id">修改</a> / <a href="#" class="link" data-status="start">启用</a></td>
+					#end
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($userpage 'userForm')
+		
+		</form>
+	</div>
+
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+
+	<script>
+		$(function(){
+			"use strict";
+
+			function changeState(link){
+				var id = link.parents("tr").children().first().text().trim();
+				var currentState = link.data("status");
+
+				var status = link.parents("tr").children().eq(3);
+				
+				jQuery.ajax({
+					url: "$admurl/admin/member/verifyAdminUser.html",
+					data: { uid: +id, opt: currentState },
+					success: function(res){
+						var result = res;
+						if(1 === +result){
+							if("停用" === link.text().trim()){
+								swal("更新成功!");
+								status.text("正常");
+								link.text("启用");
+							}
+							else{
+								swal("更新成功!");
+								status.text("已停用");
+								link.text("停用");
+							}
+						}
+					}
+				});
+			}
+
+			$(".link").click(function(e){
+				var link = $(this);
+				changeState(link);
+				e.preventDefault();
+				return false;
+			});
+			
+		});
+	</script>
+
+#footer()

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="PlanRecord" >
+  <typeAlias alias="planRecordAlias" type="com.dept.web.dao.model.PlanRecord"/>
+  <resultMap id="planRecordResult" class="planRecordAlias" >
+    <result column="id" property="id"  />
+    <result column="user_id" property="userId"  />
+    <result column="plan_id" property="planId"  />
+    <result column="plan_type" property="planType"  />
+    <result column="money_insure" property="moneyInsure"  />
+    <result column="power" property="power"  />
+    <result column="interval" property="interval"  />
+    <result column="rate" property="rate"  />
+    <result column="money_fee" property="moneyFee"  />
+    <result column="money_warning" property="moneyWarning"  />
+    <result column="money_force" property="moneyForce"  />
+    <result column="money_op" property="moneyOp"  />
+    <result column="money_settlement" property="moneySettlement"  />
+    <result column="status" property="status"  />
+    <result column="homs_account" property="homsAccount"  />
+    <result column="homs_pwd" property="homsPwd"  />
+	 <result column="user_operate" property="userOperate"  />
+    <result column="start_time" property="startTime"  />
+    <result column="end_time" property="endTime"  />
+    <result column="op_log" property="opLog"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="operated_at" property="operatedAt"  /> 
+  </resultMap>
+  
+  <resultMap id="planRecordSearchResult" extends="planRecordResult" class="planRecordAlias" >
+    <result column="username" property="username"  />
+     <result column="REALNAME" property="realname"  />
+    <result column="op_username" property="opusername"  /> 
+    <result column="mobile"  property="mobile"/>
+  </resultMap>
+ 
+  <select id="GET_BY_PLANRECORD" parameterClass="planRecordAlias" resultMap="planRecordResult">
+  	 SELECT * FROM TB_PLAN_RECORD WHERE ID = #id#
+  </select>
+ 
+  <select id="GET_COUNT_BY_STATUS_FOR_SEARCH" parameterClass="map"  resultClass="int">
+	  SELECT COUNT(0) FROM TB_PLAN_RECORD A  LEFT JOIN TB_USER C ON A.USER_OPERATE = C.ID, TB_USER B WHERE A.USER_ID = B.ID
+   	  <isNotEmpty  property="status" prepend="and">
+   		A.STATUS = #status#
+  	  </isNotEmpty>
+      <isNotEmpty property="username" prepend="and">
+    	B.USERNAME LIKE CONCAT('%', #username#, '%')
+      </isNotEmpty>
+   	  <isNotEmpty  property="mobile" prepend="and">
+   		B.MOBILE = #mobile#
+  	  </isNotEmpty>
+   	  <isNotEmpty  property="pid" prepend="and">
+   		A.ID = #pid#
+  	  </isNotEmpty>  	  
+  </select>
+  
+  <select id="GET_LIST_BY_STATUS_FOR_SEARCH" parameterClass="map" resultMap="planRecordSearchResult">
+	   SELECT B.REALNAME,B.USERNAME AS USERNAME, B.MOBILE, C.USERNAME AS OP_USERNAME, A.* FROM TB_PLAN_RECORD A  LEFT JOIN TB_USER C ON A.USER_OPERATE = C.ID, TB_USER B 
+	   WHERE A.USER_ID = B.ID  
+   	  <isNotEmpty  property="status" prepend="and">
+   		A.STATUS = #status#
+  	  </isNotEmpty>
+      <isNotEmpty property="username" prepend="and">
+    	B.USERNAME LIKE CONCAT('%', #username#, '%')
+      </isNotEmpty>
+   	  <isNotEmpty  property="mobile" prepend="and">
+   		B.MOBILE = #mobile#
+  	  </isNotEmpty>
+   	  <isNotEmpty  property="pid" prepend="and">
+   		A.ID = #pid#
+  	  </isNotEmpty>  	   
+	  ORDER BY A.ID DESC
+  </select>
+  
+   <update id="UPDATE_STATUS_BY_ID" parameterClass="planRecordAlias">
+   		UPDATE TB_PLAN_RECORD
+   		<dynamic prepend="set">
+   			<isNotNull prepend="," property="status">
+   			`STATUS` = #status#
+   			</isNotNull>
+   			<isNotNull prepend="," property="homsAccount">
+   			HOMS_ACCOUNT = #homsAccount#
+   			</isNotNull>
+   			<isNotNull prepend="," property="homsPwd">
+   			HOMS_PWD = #homsPwd#
+   			</isNotNull>
+    		<isNotNull prepend="," property="operatedAt">
+   			OPERATED_AT = #operatedAt#
+   			</isNotNull>
+   			<isNotNull prepend="," property="userOperate">
+   			USER_OPERATE = #userOperate#
+   			</isNotNull>
+   			<isNotNull prepend="," property="startTime">
+   			START_TIME = #startTime#
+   			</isNotNull>
+   			<isNotNull prepend="," property="endTime">
+   			END_TIME = #endTime#
+   			</isNotNull>   			   			
+   		</dynamic>
+   		WHERE ID = #id#
+   </update>
+ 
+</sqlMap>

@@ -1,0 +1,65 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">报表管理</a></li>
+	  <li class="active">用户充值明细表</li>
+	</ol>
+<!------------------内容区------------------->
+<div class="">
+		<form id="accountForm" name="accountForm" action="$admurl/admin/moneyLog.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="status" name="status" value="$!status" />
+		  <div class="form-group">
+	              充值用户名：		  
+	      <input type="text" class="form-control" style="width: 180px" placeholder="充值用户名" name="username" value="$!username">
+	             开始时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="充值时间" name="startTime" value="$!startTime">	
+      	  结束时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="审核时间" name="endTime" value="$!endTime">	
+      	  </div>
+      	  &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>
+	    <br>
+	    <br>
+	<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+			<td class="pure-table-title">充值单号</td>
+			<td class="pure-table-title">是否充值成功</td>
+			<td class="pure-table-title">充值用户名</td>
+			<td class="pure-table-title">备注</td>
+			<td class="pure-table-title">充值时间</td>
+			<td class="pure-table-title">充值IP地址</td>
+			<td class="pure-table-title">审核时间</td>
+			</tr>
+			</thead> 	                                                                                                    	                           	        
+		<tbody>
+           	#foreach($account in ${accountpage.result})  
+        <tr>
+            <td>$account.orderId</td>
+            <td>
+            #if($!account.status==1) 充值成功
+				#else 充值失败
+				#end
+			</td>
+            <td>$account.username</td>
+            <td>$account.remark</td>
+            <td>$timeTool.getStr1($!account.createdAt)</td>
+            <td>$account.createdIp</td>
+            <td>$timeTool.getStr1($!account.updatedAt)</td>
+         </tr>
+            #end
+         </tbody>
+	</table>
+	    #pagination($accountpage 'accountForm')
+	</form>
+	<form action="$admurl/admin/moneyLog.html" method="post" style="position:  -13px; padding-right:36px;  text-align: right;">
+			<input type="hidden" name="page" #if($!page) value="$page" #else value="1" #end/>
+			<input type="hidden" name="excel" value="excel" />
+			<input type="hidden" name="username" value="$!username">
+			<input type="hidden" name="startTime" value="$!startTime">	
+			<input type="hidden" name="endTime" value="$!endTime">	
+			<input type="submit" value="导出">
+		</form>
+</div>
+<!-------------------------页脚------------------------>
+#footer()

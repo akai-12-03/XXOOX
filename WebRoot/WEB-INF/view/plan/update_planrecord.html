@@ -1,0 +1,51 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">配资管理</a></li>
+	  <li class="active">更新配资记录</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/plan/updateRecord.html?opt=upd" method="post">
+		  <input type="hidden" id="pid" name="pid" value="$!pse.id" />
+		  
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label">配资类型</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">#if($!pse.planType==1) 按天配资 #elseif($!pse.planType==2) 按月配资 #elseif($!pse.planType==3) 免费体验  #end</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">同花顺账号</label>
+		    <div class="col-sm-3">
+				<input type="text"  class="form-control" id="homsaccount" name="homsaccount" value="$!pse.homsAccount">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">同花顺密码</label>
+		    <div class="col-sm-3">
+				<input type="text"  class="form-control" id="homspwd" name="homspwd" value="$!pse.homsPwd">
+		    </div>
+		  </div>
+		  #if($!pse.planType==1 && $!pse.status==0)
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">配资期限</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pse.interval 天</p>
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">到期时间</label>
+		    <div class="col-sm-3">
+				<input type="text" class="xmdate form-control" style="width: 200px" placeholder="结束时间" name="endTime" value="$!endTime">
+		    </div>
+		  </div>
+		  #end		  
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="submit" class="btn btn-primary">更新</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	
+#footer()

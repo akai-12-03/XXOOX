@@ -1,0 +1,73 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li class="active"><a href="#">系统设置</a></li>
+	</ol>
+	<div class="">
+		  
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>设置名</th>
+					<th>设置值</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($set in $settinglist)
+				<tr>
+					<td>$!set.id</td>
+					<td><input type="text" name="set_name" value="$!set.name" id="set_name_$!set.id"></td>
+					<td><input type="text" name="set_value" value="$!set.value" id="set_value_$!set.id"></td>
+					#if($!set.id=='23' || $!set.id==4 || $!set.id == 3)
+					<td></td>
+					#else
+					<td><a class="xxxx" href="javascript:void(0)" data-id="$!set.id">更新</a></td>
+					#end
+				</tr>
+				#end
+			</tbody>
+		</table>	
+		<!--   
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">设置名</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="set_name" name="set_name" value="$!set.name">
+		    </div>
+		    <label for="inputPassword3" class="col-sm-2 control-label">设置值</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="set_value" name="set_value" value="$!set.value">
+		    </div>
+		    <a></a><button type="button" class="btn btn-primary" onclick="updset()">更新</button>		    
+		  </div>
+		   -->	
+	</div>
+	<script type="text/javascript">
+	
+		$("a.xxxx").on('click', function(){
+			var id = $(this).data('id');
+			var name = $('#set_name_'+id).val();
+			var val = $('#set_value_'+id).val();
+			console.log(id, name,val);
+			jQuery.ajax({
+				url: ROOT_URL + "/admin/system/settingup.html",
+				data: {
+					sid: id,
+					name: name,
+					value: val
+				},
+				dataType: "json",
+				success: function(res){
+	                if(res===1){
+	                	swal("更新成功");
+	                }else{
+	                	swal("更新失败");
+	                }
+				}
+			});
+		});	
+	</script>
+	
+#footer()

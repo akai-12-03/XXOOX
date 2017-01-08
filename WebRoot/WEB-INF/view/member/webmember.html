@@ -1,0 +1,43 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">用户管理</a></li>
+	  <li><a href="${admurl}/admin/member/webuser.html?ctype=web">前台用户列表</a></li>
+	  <li class="active">前台用户实名认证</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/member/ideuser.html?opt=ide" method="post">
+		
+		  <input type="hidden" name="uid" id="uid" value="$!webuser.id"/>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!webuser.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">真实姓名</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="realname" name="realname" value="$!webuser.realname">
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">身份证号</label>
+		    <div class="col-sm-3">
+		      <input type="tel"  class="form-control" id="idCard" name="idCard" value="$!webuser.idCard">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="submit" class="btn btn-primary">实名认证</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+#footer()

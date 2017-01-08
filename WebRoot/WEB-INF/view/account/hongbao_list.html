@@ -1,0 +1,90 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li class="active">红包使用记录</li>
+	</ol>
+	<div class="">
+		<form id="hongbaoLog" name="hongbaoLog" action="$admurl/admin/hongbao_list.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<div class="form-group">
+		用户名:
+	    <input type="text" class="form-control" placeholder="用户名" id="username" name="username" value="$!username">
+		红包类型:
+			<select class="form-control" id="type"  name="type" >
+			  <option #if($!type=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!type=='1') selected="selected"  #end value="1" >用户注册送</option>
+			  <option #if($!type=='2') selected="selected"  #end value="2" >推荐好友送</option>
+			</select>
+		红包状态:
+			<select class="form-control" id="status" name="status" >
+			  <option #if($!status=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!status=='0') selected="selected"  #end value="0" >未使用</option>
+			  <option #if($!status=='1') selected="selected"  #end value="1" >已使用</option>
+			  <option #if($!status=='2') selected="selected"  #end value="2" >使用中</option>
+			  <option #if($!status=='3') selected="selected"  #end value="3" >已过期</option>
+			</select>
+      	</div>
+      	  <button type="submit" class="btn btn-default">搜索</button>
+      	   &nbsp;&nbsp;&nbsp;<a  id="excel_hongbao"  class="btn btn-default"> 导出Excel</a>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>用户名</th>
+					<th>项目名称</th>
+					<th>红包类型</th>
+					<th>红包状态</th>
+					<th>红包金额</th>
+					<th>红包发放时间</th>
+					<th>红包过期时间</th>
+					<th>红包使用时间</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($hongbao in ${hongbaoPage.result})  
+				<tr>
+					<td>$!hongbao.username</td>
+					<td>$!hongbao.name</td>
+					<td>
+						#if($!hongbao.type==1)
+							用户注册送
+						#elseif($!hongbao.type==2)
+							推荐好友送
+						#else
+							其他
+						#end
+					</td>
+					<td>
+						#if($!hongbao.status==0)
+							未使用
+						#elseif($!hongbao.status==1)
+							已使用
+						#elseif($!hongbao.status==2)
+							使用中
+						#elseif($!hongbao.status==3)
+							已过期
+						#end
+					</td>
+					<td>$!hongbao.money</td>
+					<td>$!dateTool.dateStr2($!hongbao.updatetime, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td>$!dateTool.dateStr2($!hongbao.endtime, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td>$!dateTool.dateStr2($!hongbao.usetime, 'yyyy-MM-dd HH:mm:ss')</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($hongbaoPage 'hongbaoLog')
+		
+		</form>
+	</div>
+	<script type="text/javascript">
+		$("#excel_hongbao").click(function(){
+			var username=$("#username").val();
+			var type=$("#type").val();
+			var status=$("#status").val();
+			this.href="$admurl/admin/account_excel.html?username="+username+"&type="+type+"&status="+status+"&eType=hb";
+		});
+	</script>
+#footer()

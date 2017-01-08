@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Borrow" >
+  <typeAlias alias="borrowAlias" type="com.dept.web.dao.model.Borrow"/>
+  <resultMap id="borrowResult" class="borrowAlias" >
+    <result column="id" property="id"  />
+    <result column="user_id" property="userId"  />
+    <result column="name" property="name"  />
+    <result column="status" property="status"  />
+    <result column="bo_order" property="boOrder"  />
+    <result column="hits" property="hits"  />
+    <result column="litpic" property="litpic"  />
+    <result column="borrow_type" property="borrowType"  />
+    <result column="verify_user" property="verifyUser"  />
+    <result column="verify_time" property="verifyTime"  />
+    <result column="verify_remark" property="verifyRemark"  />
+    <result column="repayment_account" property="repaymentAccount"  />
+    <result column="repayment_yesaccount" property="repaymentYesAccount"  />
+    <result column="repayment_yesinterest" property="repaymentYesInterest"  />
+    <result column="borrow_use" property="borrowUse"  />
+    <result column="time_limit" property="timeLimit"  />
+    <result column="repayment_style" property="repaymentStyle"  />
+    <result column="account" property="account"  />
+    <result column="account_yes" property="accountYes"  />
+    <result column="apr" property="apr"  />
+    <result column="lowest_account" property="lowestAccount"  />  
+    <result column="most_account" property="mostAccount"  />
+    <result column="valid_time" property="validTime"  />
+    <result column="award" property="award"  />
+    <result column="part_account" property="partAccount"  />
+    <result column="funds" property="funds"  />
+    <result column="open_account" property="openAccount"  />
+    <result column="open_borrow" property="openBorrow"  />
+    <result column="open_tender" property="openTender"  />
+    <result column="open_credit" property="openCredit"  />
+    <result column="content" property="content"  />
+    <result column="addtime" property="addtime"  />
+    <result column="addip" property="addip"  />
+    <result column="pwd" property="pwd"  />
+    <result column="isday" property="isDay"  />
+    <result column="trust_level" property="trustLevel"  />
+    <result column="borrow_fee_apr" property="borrowFeeApr"  />
+    <result column="version" property="version"  />
+    <result column="borrower_userid" property="borrowerUserId"  />
+    <result column="updatetime" property="updatetime"  />
+    <result column="updateip" property="updateip"  />
+    <result column="fxpj" property="fxpj"  />
+    <result column="cpxq" property="cpxq"  />
+    <result column="jyjg" property="jyjg"  />
+    <result column="fkcs" property="fkcs"  />
+    <result column="zggf" property="zggf"  />
+    <result column="cpxqs" property="cpxqs"  />
+    <result column="jyjgs" property="jyjgs"  />
+    <result column="fkcss" property="fkcss"  />
+    <result column="zggfs" property="zggfs"  /> 
+    <result column="contents" property="contents"  />
+    <result column="num" property="num"  /> 
+    <result column="index_status" property="index_status"  />
+    <result column="borrow_fee" property="borrow_fee"  /> 
+    <result column="mortgagor" property="mortgagor"  /> 
+    <result column="receivePerson" property="receivePerson"  />
+    <result column="repayPerson" property="repayPerson"  />
+    <result column="isTran" property="isTran" />
+    <result column="marketFee" property="marketFee"/>
+  </resultMap>
+  
+  <resultMap id="borrowSearchResult" class="borrowAlias" extends="borrowResult">
+  	<result column="username" property="username"  /> 
+  </resultMap>
+  
+  <resultMap id="borrowCountAndMoneyResult" class="borrowAlias" >
+  	<result column="borrowCount" property="borrowCount"  />
+  	<result column="borrowMoneyCount" property="borrowMoneyCount"  />
+  	<result column="borrowMoneyCountYes" property="borrowMoneyCountYes"  />
+  </resultMap>
+
+
+  
+  <resultMap id="borrowBorrowRepaymentResult" class="borrowAlias" extends="borrowResult">
+  	<result column="username" property="username"  /> 
+  	<result column="hktime" property="hktime"  /> 
+  	<result column="hkinterest" property="hkinterest"  /> 
+  	<result column="hkaccount" property="hkaccount"  /> 
+  </resultMap>
+
+  <select id="GET_BY_ID" parameterClass="Long"  resultMap="borrowResult">
+  	SELECT * FROM TB_BORROW WHERE ID = #value#
+  </select>
+
+  <select id="GET_COUNT_BY_SEARCH" parameterClass="map"  resultClass="int">
+	  SELECT count(1) from tb_borrow A LEFT JOIN tb_user  C ON C.id=A.user_id  
+		  <dynamic prepend="where">
+		  	<isNotEmpty property="id" prepend="and">
+		     	  A.id LIKE CONCAT('%', #id#, '%')
+		      </isNotEmpty>
+		      <isNotEmpty property="name" prepend="and">
+		     	  A.NAME LIKE CONCAT('%', #name#, '%')
+		      </isNotEmpty>
+		 	  <isNotEmpty property="startTime" prepend="and">
+		 	      FROM_UNIXTIME(A.ADDTIME,'%m\/%d\/%Y')>=#startTime#
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="endTime" prepend="and">
+		 	      <![CDATA[  
+		            FROM_UNIXTIME(A.ADDTIME,'%m\/%d\/%Y')<= #endTime#  
+		          ]]> 
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="status" prepend="and">
+		 	      	A.`STATUS` = #status#
+		 	  </isNotEmpty>	 	  
+		  </dynamic>
+  </select>
+  
+  <select id="GET_COUNT_BY_USERBORROWTENDER" parameterClass="map"  resultClass="int">
+	  select count(1)
+	   			from tb_borrow a,tb_borrow_tender b,tb_user c where a.id=b.borrow_id and a.user_id=c.id and a.`status` in(1,2,3,5,6,11)
+        <isNotEmpty property="username" prepend="and">
+    		c.username LIKE CONCAT('%', #username#, '%')
+        </isNotEmpty>
+	 	<isNotEmpty property="startTime" prepend="and">
+	 	    FROM_UNIXTIME(b.addtime,'%m\/%d\/%Y')>=#startTime#
+	 	</isNotEmpty>
+	 	<isNotEmpty property="endTime" prepend="and">
+	 	   <![CDATA[  
+             FROM_UNIXTIME(b.addtime,'%m\/%d\/%Y')<= #endTime#  
+           ]]> 
+	 	</isNotEmpty>
+  </select>
+  
+  <select id="GET_LIST_BY_USERBORROWTENDER" parameterClass="map" resultMap="borrowBorrowRepaymentResult">
+	   select  a.*,c.username as username,b.addtime as hktime,b.repayment_yesinterest as hkinterest,b.repayment_yesaccount as hkaccount
+				from tb_borrow a,tb_borrow_tender b,tb_user c where a.id=b.borrow_id and a.user_id=c.id and a.`status` in(1,2,3,5,6,11)
+        <isNotEmpty property="username" prepend="and">
+    		c.USERNAME LIKE CONCAT('%', #username#, '%')
+        </isNotEmpty>
+	 	<isNotEmpty property="startTime" prepend="and">
+	 	    FROM_UNIXTIME(b.addtime,'%m\/%d\/%Y')>=#startTime#
+	 	</isNotEmpty>
+	 	<isNotEmpty property="endTime" prepend="and">
+	 	   <![CDATA[  
+             FROM_UNIXTIME(b.addtime,'%m\/%d\/%Y')<= #endTime#  
+           ]]> 
+	 	</isNotEmpty>
+	  ORDER BY a.ID DESC
+  </select> 
+  
+  <select id="GET_BY_BORROW_COUNT_MONEY" parameterClass="borrowAlias" resultMap="borrowCountAndMoneyResult">
+  		select sum(account) as borrowMoneyCount,count(1) as borrowCount,SUM(account_yes) as borrowMoneyCountYes  from  tb_borrow where  status=6 or status=8
+  	</select>
+  
+   <select id="GET_LIST_BY_SEARCH" parameterClass="map" resultMap="borrowSearchResult">
+  	SELECT A.*,C.username from tb_borrow A LEFT JOIN tb_user  C ON C.id=A.user_id  
+		  <dynamic prepend="where">
+		  	<isNotEmpty property="id" prepend="and">
+		     	  A.id LIKE CONCAT('%', #id#, '%')
+		      </isNotEmpty>
+		      <isNotEmpty property="name" prepend="and">
+		     	  A.NAME LIKE CONCAT('%', #name#, '%')
+		      </isNotEmpty>
+		 	  <isNotEmpty property="startTime" prepend="and">
+		 	      FROM_UNIXTIME(A.ADDTIME,'%m\/%d\/%Y')>=#startTime#
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="endTime" prepend="and">
+		 	      <![CDATA[  
+		            FROM_UNIXTIME(A.ADDTIME,'%m\/%d\/%Y')<= #endTime#  
+		          ]]> 
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="status" prepend="and">
+		 	      	A.`STATUS` = #status#
+		 	  </isNotEmpty>	 	  
+		  </dynamic>	
+		 ORDER BY A.ID DESC
+  </select>
+  
+  <select id="GET_LIST_BY_REVERIFY" parameterClass="map" resultMap="borrowResult">
+  	 SELECT A.* FROM TB_BORROW A, TB_VERIFY_BORROW_LOG B WHERE A.`STATUS` = #status# AND B.BORROW_ID = A.ID
+  	 AND B.OP_TYPE = #opType# AND OP_STATUS = 0
+  	 ORDER BY A.VERIFY_TIME DESC
+  </select>
+  
+  <select id="GET_LIST_BY_OVER" parameterClass="Long" resultMap="borrowResult">
+  	<![CDATA[  
+	SELECT * FROM TB_BORROW WHERE (`STATUS` = 0 AND (addtime+valid_time*60*60*24) < #value# )  
+		OR (`STATUS` = 1 AND ACCOUNT > ACCOUNT_YES AND (addtime+valid_time*60*60*24)< #value#)
+	]]>
+  </select>
+    
+  <insert id="SAVE_BORROW" parameterClass="borrowAlias">
+  	INSERT INTO TB_BORROW(USER_ID, NAME, `STATUS`, BO_ORDER, HITS, LITPIC, BORROW_TYPE, VERIFY_USER, VERIFY_TIME, 
+  		VERIFY_REMARK, REPAYMENT_ACCOUNT, REPAYMENT_YESACCOUNT, REPAYMENT_YESINTEREST, BORROW_USE, TIME_LIMIT, REPAYMENT_STYLE,
+  		ACCOUNT, ACCOUNT_YES, APR, LOWEST_ACCOUNT, MOST_ACCOUNT, VALID_TIME, AWARD, PART_ACCOUNT, FUNDS,
+  		OPEN_ACCOUNT, OPEN_BORROW, OPEN_TENDER, OPEN_CREDIT, CONTENT, ADDTIME, ADDIP, PWD, ISDAY, TRUST_LEVEL, BORROW_FEE_APR,
+  		`VERSION`, BORROWER_USERID, UPDATETIME, UPDATEIP,FXPJ,CPXQ,JYJG,FKCS,ZGGF,CPXQS,JYJGS,FKCSS,ZGGFS,CONTENTS,NUM,INDEX_STATUS,BORROW_FEE,MORTGAGOR,RECEIVEPERSON,REPAYPERSON,ISTRAN,MARKETFEE)
+  	VALUES(#userId#, #name#, #status#,#boOrder#,#hits#,#litpic#,#borrowType#,#verifyUser#,#verifyTime#,
+  			#verifyRemark#,#repaymentAccount#,#repaymentYesAccount#,#repaymentYesInterest#,#borrowUse#, #timeLimit#, #repaymentStyle#,
+  			#account#,#accountYes#,#apr#,#lowestAccount#,#mostAccount#,#validTime#,#award#,#partAccount#,#funds#,
+  			#openAccount#,#openBorrow#,#openTender#,#openCredit#,#content#,#addtime#,#addip#,#pwd#,#isDay#,#trustLevel#,#borrowFeeApr#,#version#, 
+  			#borrowerUserId#, #updatetime#, #updateip#,#fxpj#,#cpxq#,#jyjg#,#fkcs#,#zggf#,#cpxqs#,#jyjgs#,#fkcss#,#zggfs#,#contents#,#num#,#index_status#,#borrow_fee#,#mortgagor#,#receivePerson#,#repayPerson#,#isTran#,#marketFee#)
+ 		 <selectKey resultClass="long" >
+ 			SELECT LAST_INSERT_ID()
+  	     </selectKey>  
+  </insert>
+  
+  <update id="UPDATE_BORROW" parameterClass="borrowAlias">
+  	UPDATE TB_BORROW 
+  	<dynamic prepend="set">
+  		<isNotNull prepend="," property="userId">
+  			USER_ID = #userId#
+  		</isNotNull>
+  		<isNotNull prepend="," property="name">
+  			NAME = #name#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="status">
+  			`STATUS` = #status#
+  		</isNotNull>
+  		<isNotNull prepend="," property="boOrder">
+  			BO_ORDER = #boOrder#
+  		</isNotNull>
+  		<isNotNull prepend="," property="hits">
+  			HITS = #hits#
+  		</isNotNull>
+  		<isNotNull prepend="," property="litpic">
+  			LITPIC = #litpic#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="borrowType">
+  			BORROW_TYPE = #borrowType#
+  		</isNotNull>
+  		<isNotNull prepend="," property="verifyUser">
+  			VERIFY_USER = #verifyUser#
+  		</isNotNull>
+  		<isNotNull prepend="," property="verifyTime">
+  			VERIFY_TIME = #verifyTime#
+  		</isNotNull>
+  		<isNotNull prepend="," property="verifyRemark">
+  			VERIFY_REMARK = #verifyRemark#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="repaymentAccount">
+  			REPAYMENT_ACCOUNT = #repaymentAccount#
+  		</isNotNull>
+  		<isNotNull prepend="," property="repaymentYesAccount">
+  			REPAYMENT_YESACCOUNT = #repaymentYesAccount#
+  		</isNotNull>
+  		<isNotNull prepend="," property="repaymentYesInterest">
+  			REPAYMENT_YESINTEREST = #repaymentYesInterest#
+  		</isNotNull>
+  		<isNotNull prepend="," property="borrowUse">
+  			BORROW_USE = #borrowUse#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="timeLimit">
+  			TIME_LIMIT = #timeLimit#
+  		</isNotNull>
+  		<isNotNull prepend="," property="repaymentStyle">
+  			REPAYMENT_STYLE = #repaymentStyle#
+  		</isNotNull>
+  		<isNotNull prepend="," property="account">
+  			ACCOUNT = #account#
+  		</isNotNull>
+  		<isNotNull prepend="," property="accountYes">
+  			ACCOUNT_YES = #accountYes#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="apr">
+  			APR = #apr#
+  		</isNotNull>
+  		<isNotNull prepend="," property="lowestAccount">
+  			LOWEST_ACCOUNT = #lowestAccount#
+  		</isNotNull>
+  		<isNotNull prepend="," property="mostAccount">
+  			MOST_ACCOUNT = #mostAccount#
+  		</isNotNull>
+  		<isNotNull prepend="," property="validTime">
+  			VALID_TIME = #validTime#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="award">
+  			AWARD = #award#
+  		</isNotNull>
+  		<isNotNull prepend="," property="partAccount">
+  			PART_ACCOUNT = #partAccount#
+  		</isNotNull>
+  		<isNotNull prepend="," property="funds">
+  			FUNDS = #funds#
+  		</isNotNull>
+  		<isNotNull prepend="," property="openAccount">
+  			OPEN_ACCOUNT = #openAccount#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="openBorrow">
+  			OPEN_BORROW = #openBorrow#
+  		</isNotNull>
+  		<isNotNull prepend="," property="openTender">
+  			OPEN_TENDER = #openTender#
+  		</isNotNull>
+  		<isNotNull prepend="," property="openCredit">
+  			OPEN_CREDIT = #openCredit#
+  		</isNotNull>
+  		<isNotNull prepend="," property="content">
+  			CONTENT = #content#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="addtime">
+  			ADDTIME = #addtime#
+  		</isNotNull>
+  		<isNotNull prepend="," property="addip">
+  			ADDIP = #addip#
+  		</isNotNull>
+  		<isNotNull prepend="," property="pwd">
+  			PWD = #pwd#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="isDay">
+  			ISDAY = #isDay#
+  		</isNotNull>
+  		<isNotNull prepend="," property="trustLevel">
+  			TRUST_LEVEL = #trustLevel#
+  		</isNotNull>
+  		<isNotNull prepend="," property="borrowFeeApr">
+  			BORROW_FEE_APR = #borrowFeeApr#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="version">
+  			`VERSION` = #version#
+  		</isNotNull>
+  		<isNotNull prepend="," property="borrowerUserId">
+  			BORROWER_USERID = #borrowerUserId#
+  		</isNotNull>
+  		<isNotNull prepend="," property="updatetime">
+  			UPDATETIME = #updatetime#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="updateip">
+  			UPDATEIP = #updateip#
+  		</isNotNull> 	
+  		<isNotNull prepend="," property="fxpj">
+  			fxpj = #fxpj#
+  		</isNotNull> 
+  		<isNotNull prepend="," property="cpxq">
+  			cpxq = #cpxq#
+  		</isNotNull>
+  		<isNotNull prepend="," property="jyjg">
+  			jyjg = #jyjg#
+  		</isNotNull>
+  		<isNotNull prepend="," property="fkcs">
+  			fkcs = #fkcs#
+  		</isNotNull>
+  		<isNotNull prepend="," property="zggf">
+  			zggf = #zggf#
+  		</isNotNull>
+  		<isNotNull prepend="," property="cpxqs">
+  			cpxqs = #cpxqs#
+  		</isNotNull>
+  		<isNotNull prepend="," property="jyjgs">
+  			jyjgs = #jyjgs#
+  		</isNotNull>
+  		<isNotNull prepend="," property="fkcss">
+  			fkcss = #fkcss#
+  		</isNotNull>
+  		<isNotNull prepend="," property="zggfs">
+  			zggfs = #zggfs#
+  		</isNotNull>
+  		<isNotNull prepend="," property="contents">
+  			CONTENTs = #contents#
+  		</isNotNull>  	
+  		<isNotNull prepend="," property="num">
+  			num = #num#
+  		</isNotNull>   
+  		<isNotNull prepend="," property="index_status">
+  			index_status = #index_status#
+  		</isNotNull>   
+  		<isNotNull prepend="," property="borrow_fee">
+  			borrow_fee = #borrow_fee#
+  		</isNotNull>   		  		 		 		  		  	
+  	</dynamic>
+  
+  	WHERE ID = #id#
+  	
+  </update>  
+  
+    <update id="UPDATE_FOR_STATUS" parameterClass="Map">
+  		UPDATE TB_BORROW SET STATUS = #status#, UPDATETIME = #nowd#, UPDATEIP = #ip# WHERE ID = #id#
+  	</update>
+  	
+  		  <select id="GET_LIST_BY_BORROWSTATUS" parameterClass="int" resultMap="borrowResult">
+      select * from TB_BORROW where `STATUS` = #status#
+  </select>
+  	  <update id="UPDATE_UPDATE_BORROW_STATUS" parameterClass="borrowAlias">
+ 	 <![CDATA[
+ 		 update TB_BORROW set status=#status# where id= #id#
+	  ]]>
+ </update>
+ 
+ <select id="GET_LIST_BY_SEARCHBORROWEXCEL" parameterClass="map" resultMap="borrowSearchResult">
+  	SELECT A.*,C.username from tb_borrow A LEFT JOIN tb_user  C ON C.id=A.user_id  
+		  <dynamic prepend="where">
+		  	<isNotEmpty property="id" prepend="and">
+		     	  A.id LIKE CONCAT('%', #id#, '%')
+		      </isNotEmpty>
+		      <isNotEmpty property="name" prepend="and">
+		     	  A.NAME LIKE CONCAT('%', #name#, '%')
+		      </isNotEmpty>
+		 	  <isNotEmpty property="startTime" prepend="and">
+		 	      FROM_UNIXTIME(A.ADDTIME,'%m\/%d\/%Y')>=#startTime#
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="endTime" prepend="and">
+		 	      <![CDATA[  
+		            FROM_UNIXTIME(A.ADDTIME,'%m\/%d\/%Y')<= #endTime#  
+		          ]]> 
+		 	  </isNotEmpty>
+		 	  <isNotEmpty property="status" prepend="and">
+		 	      	A.`STATUS` = #status#
+		 	  </isNotEmpty>	 	  
+		  </dynamic>	
+		 ORDER BY A.ID DESC
+  </select>
+ 
+</sqlMap>

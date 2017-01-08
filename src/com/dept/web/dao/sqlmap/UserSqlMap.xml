@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="User" >
+  <typeAlias alias="userAlias" type="com.dept.web.dao.model.User"/>
+    <resultMap id="userResult" class="userAlias" >
+	    <result column="id" property="id"  />
+	    <result column="username" property="username"  />
+	    <result column="password_hash" property="passwordHash"  />
+	    <result column="password_pay_hash" property="passwordPayHash"  />
+	    <result column="password_reset_token" property="passwordResetToken"  />
+	    <result column="auth_key" property="authKey"  />
+	    <result column="role" property="role"  />
+	    <result column="status" property="status"  />
+	    <result column="mobile" property="mobile"  />
+	    <result column="email" property="email"  />
+	    <result column="realname" property="realname"  />
+	    <result column="id_card" property="idCard"  />
+	    <result column="sex" property="sex"  />
+	    <result column="birthday" property="birthday"  />
+	    <result column="email_binding_status" property="emailBindingStatus"  />
+	    <result column="mobile_binding_status" property="mobileBindingStatus"  />
+	    <result column="real_verify_status" property="realVerifyStatus"  />
+	    <result column="card_binding_status" property="cardBindingStatus"  />
+	    <result column="card_id_base" property="cardIdBase"  />
+	    <result column="created_at" property="createdAt"  />
+	    <result column="updated_at" property="updatedAt"  />
+	    <result column="created_ip" property="createdIp"  />
+	    <result column="invite_userid" property="inviteUserId"  />
+	     <result column="autoType" property="autoType"  />
+    </resultMap>
+
+	<resultMap id="inviteuserResult" class="userAlias" extends="userResult">
+	    <result column="money_total" property="moneyTotal"  />
+	    <result column="money_usable" property="moneyUsable"  />
+	    <result column="money" property="money"  />
+    </resultMap>
+    
+    <resultMap id="accountUserResult" class="userAlias" extends="userResult">
+	    <result column="account" property="account"  />
+	    <result column="capital" property="capital"  />
+	    <result column="interest" property="interest"  />
+    </resultMap>
+    
+    <resultMap id="userTenderResult" class="userAlias" extends="userResult">
+	    <result column="account" property="account"  />
+	    <result column="tendertime" property="tendertime"  />
+    </resultMap>
+    
+    <select id="GET_BY_USERNAME"  parameterClass="String" resultMap="userResult">
+       SELECT * FROM TB_USER WHERE USERNAME = #value#
+    </select>
+
+    <select id="GET_BY_ID"  parameterClass="Long" resultMap="userResult">
+       SELECT * FROM TB_USER WHERE ID = #value#
+    </select>
+    
+    
+    <select id="GET_BY_MIDID"  parameterClass="String" resultMap="userResult">
+       SELECT * FROM TB_USER WHERE moneymoremoreId = #value#
+    </select>
+    
+    <select id="GET_BY_MIDBYID"  parameterClass="Long" resultClass="string">
+       SELECT moneymoremoreId FROM TB_USER WHERE ID = #value#
+    </select>
+    
+    <select id="GET_COUNT_BY_SEARCHINVITE"  parameterClass="map" resultClass="int">
+       SELECT
+			count(1)
+		FROM
+			tb_user u
+		LEFT JOIN tb_user_account a ON u.id = a.user_id
+		WHERE
+			u.invite_userid IS NOT NULL
+       		<isNotEmpty property="startTime" prepend="and">
+       			<![CDATA[
+		 	      FROM_UNIXTIME(u.created_at,'%m\/%d\/%Y')>=#startTime#
+		 	      ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	    <![CDATA[  
+		            FROM_UNIXTIME(u.created_at,'%m\/%d\/%Y')<= #endTime#  
+		          ]]> 
+		 	</isNotEmpty>
+    </select>
+     <select id="GET_LIST_BY_SEARCHINVITE"  parameterClass="map" resultMap="inviteuserResult">
+       SELECT
+			u.*, a.money_total,
+			a.money_usable,
+			(
+				SELECT
+					t.money
+				FROM
+					tb_borrow_tender t
+				WHERE
+					t.user_id = u.id
+				AND t. STATUS = 1
+				ORDER BY id
+				LIMIT 1
+			) AS money
+		FROM
+			tb_user u
+		LEFT JOIN tb_user_account a ON u.id = a.user_id
+		WHERE
+			u.invite_userid IS NOT NULL
+       		<isNotEmpty property="startTime" prepend="and">
+       			<![CDATA[
+		 	      FROM_UNIXTIME(u.created_at,'%m\/%d\/%Y')>=#startTime#
+		 	      ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	    <![CDATA[  
+		            FROM_UNIXTIME(u.created_at,'%m\/%d\/%Y')<= #endTime#  
+		          ]]> 
+		 	</isNotEmpty>
+    </select>
+    
+    
+    <select id="GET_COUNT_BY_SEARCH"  parameterClass="map" resultClass="int">
+       SELECT COUNT(0) 
+       FROM
+	tb_user u left JOIN
+	(
+		SELECT
+			t.user_id,
+			sum(c.capital) AS capital,
+			SUM(c.interest) AS interest
+		FROM
+			tb_borrow_tender t,
+			tb_borrow_collection c
+		WHERE
+			c.tender_id = t.id
+		AND t.`status` = 1
+		AND c.`status` = 0
+		GROUP BY
+			t.user_id
+	) AS tc
+ON
+	u.id = tc.user_id
+       <dynamic prepend="where">
+       		<isEqual property="isTouzi" prepend="and" compareValue="1">
+       			EXISTS (select t2.user_id from tb_borrow_tender t2 where t2.user_id=u.id and t2.`status`=1)
+       		</isEqual>
+       		<isEqual property="isTouzi" prepend="and" compareValue="2">
+       			NOT EXISTS (select t2.user_id from tb_borrow_tender t2 where t2.user_id=u.id and t2.`status`=1)
+       		</isEqual>
+       		<isNotEmpty property="username" prepend="and">
+       			USERNAME LIKE CONCAT('%', #username#, '%')
+       		</isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+	   	    <isNotEmpty  property="mobile" prepend="and">
+	   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+	  	    </isNotEmpty>        		
+       </dynamic>
+    </select>
+    <select id="GET_BY_UPDATEINVITEBYID" parameterClass="map" resultClass="int">
+    	update  tb_user set invite_userid=#inviteId# WHERE id=#userId# 
+    </select>
+    <select id="GET_LIST_BY_SEARCH"  parameterClass="map" resultMap="accountUserResult">
+    	SELECT
+	u.*, (
+		SELECT
+			ROUND(IFNULL(sum(t2.account),0),2)
+		FROM
+			tb_borrow_tender t2
+		WHERE
+			t2.user_id = u.id
+		AND t2. STATUS = 1
+	) AS account,
+	ROUND(IFNULL(tc.capital,0),2) as capital ,
+	ROUND(IFNULL(tc.interest,0),2) as interest
+FROM
+	tb_user u left JOIN
+	(
+		SELECT
+			t.user_id,
+			sum(c.capital) AS capital,
+			SUM(c.interest) AS interest
+		FROM
+			tb_borrow_tender t,
+			tb_borrow_collection c
+		WHERE
+			c.tender_id = t.id
+		AND t.`status` = 1
+		AND c.`status` = 0
+		GROUP BY
+			t.user_id
+	) AS tc
+ON
+	u.id = tc.user_id
+    
+       <dynamic prepend="where">
+       		<isEqual property="isTouzi" prepend="and" compareValue="1">
+       			EXISTS (select t2.user_id from tb_borrow_tender t2 where t2.user_id=u.id and t2.`status`=1)
+       		</isEqual>
+       		<isEqual property="isTouzi" prepend="and" compareValue="2">
+       			NOT EXISTS (select t2.user_id from tb_borrow_tender t2 where t2.user_id=u.id and t2.`status`=1)
+       		</isEqual>
+       		<isNotEmpty property="username" prepend="and">
+       			USERNAME LIKE CONCAT('%', #username#, '%')
+       		</isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+	   	    <isNotEmpty  property="mobile" prepend="and">
+	   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+	  	    </isNotEmpty> 
+       </dynamic>
+    </select>
+    
+    <select id="GET_LIST_BY_NEWUSER_LIST"  parameterClass="map" resultMap="userResult">
+       <![CDATA[
+       select * from tb_user u ,(select sum(t.account) as account,t.user_id from tb_borrow_tender t where t.status=1 group by t.user_id) b where u.id=b.user_id
+		and u.created_at+3600*24*30>unix_timestamp(now())
+       ]]>
+        <isEqual property="status" compareValue="1" prepend="and">
+         <![CDATA[   b.account>=1000 and u.giveHongbao=0 ]]> 
+      	</isEqual>
+      	<isEqual property="status" compareValue="2" prepend="and">
+         <![CDATA[  b.account>=3000 and u.remHongbao=0]]> 
+      	</isEqual>
+    </select>
+    
+    <update id="UPDATE_UPDATEHONGBAOSTATUS" parameterClass="map">
+    	update TB_USER
+	    <dynamic prepend="set" >
+	      <isEqual prepend="," property="status" compareValue="1">
+	        giveHongbao = 1
+	      </isEqual>
+	      <isEqual prepend="," property="status" compareValue="2">
+	        remHongbao = 1
+	      </isEqual>
+	    </dynamic>  
+  		where id = #id#
+  </update>	
+    
+    <select id="GET_LIST_BY_USERNAME_LIST"  parameterClass="String" resultMap="userResult">
+       SELECT * FROM TB_USER WHERE USERNAME LIKE CONCAT('%', #value#, '%') AND real_verify_status=1 ORDER BY ID DESC
+	</select>
+	
+  	<update id="UPDATE_USER" parameterClass="userAlias">
+    	update TB_USER
+	    <dynamic prepend="set" >
+	      <isNotNull prepend="," property="username" >
+	        username = #username#
+	      </isNotNull>
+	      <isNotNull prepend="," property="passwordHash" >
+	        password_hash = #passwordHash#
+	      </isNotNull>
+	      <isNotNull prepend="," property="passwordPayHash" >
+	        password_pay_hash = #passwordPayHash#
+	      </isNotNull>
+	      <isNotNull prepend="," property="passwordResetToken" >
+	        password_reset_token = #passwordResetToken#
+	      </isNotNull>
+	      <isNotNull prepend="," property="authKey" >
+	        auth_key = #authKey#
+	      </isNotNull>
+	      <isNotNull prepend="," property="role" >
+	        role = #role#
+	      </isNotNull>
+	      <isNotNull prepend="," property="status" >
+	        `status` = #status#
+	      </isNotNull>
+	      <isNotNull prepend="," property="mobile" >
+	        mobile = #mobile#
+	      </isNotNull>
+	      <isNotNull prepend="," property="email" >
+	        email = #email#
+	      </isNotNull>
+	      <isNotNull prepend="," property="realname" >
+	        realname = #realname#
+	      </isNotNull>
+	      <isNotNull prepend="," property="idCard" >
+	        id_card = #idCard#
+	      </isNotNull>
+	      <isNotNull prepend="," property="sex" >
+	        sex = #sex#
+	      </isNotNull>
+	      <isNotNull prepend="," property="litpic" >
+	        litpic = #litpic#
+	      </isNotNull>
+	      <isNotNull prepend="," property="birthday" >
+	        birthday = #birthday#
+	      </isNotNull>
+	      <isNotNull prepend="," property="emailBindingStatus" >
+	        email_binding_status = #emailBindingStatus#
+	      </isNotNull>
+	      <isNotNull prepend="," property="mobileBindingStatus" >
+	        mobile_binding_status = #mobileBindingStatus#
+	      </isNotNull>
+	      <isNotNull prepend="," property="realVerifyStatus" >
+	        real_verify_status = #realVerifyStatus#
+	      </isNotNull>
+	      <isNotNull prepend="," property="cardBindingStatus" >
+	        card_binding_status = #cardBindingStatus#
+	      </isNotNull>
+	      <isNotNull prepend="," property="cardIdBase" >
+	        card_id_base = #cardIdBase#
+	      </isNotNull>
+	      <isNotNull prepend="," property="createdAt" >
+	        created_at = #createdAt#
+	      </isNotNull>
+	      <isNotNull prepend="," property="updatedAt" >
+	        updated_at = #updatedAt#
+	      </isNotNull>
+	      <isNotNull prepend="," property="createdIp" >
+	        created_ip = #createdIp#
+	      </isNotNull>
+	      <isNotNull prepend="," property="inviteUserId" >
+	        invite_userid = #inviteUserId#
+	      </isNotNull>
+	    </dynamic>  
+  			where id = #id#
+  </update>	
+  
+  
+  <select id="GET_LIST_BY_SEARCHEXCELUSER"  parameterClass="map" resultMap="accountUserResult">
+    	SELECT
+	u.*, (
+		SELECT
+			ROUND(IFNULL(sum(t2.account),0),2)
+		FROM
+			tb_borrow_tender t2
+		WHERE
+			t2.user_id = u.id
+		AND t2. STATUS = 1
+	) AS account,
+	ROUND(IFNULL(tc.capital,0),2) as capital ,
+	ROUND(IFNULL(tc.interest,0),2) as interest
+FROM
+	tb_user u left JOIN
+	(
+		SELECT
+			t.user_id,
+			sum(c.capital) AS capital,
+			SUM(c.interest) AS interest
+		FROM
+			tb_borrow_tender t,
+			tb_borrow_collection c
+		WHERE
+			c.tender_id = t.id
+		AND t.`status` = 1
+		AND c.`status` = 0
+		GROUP BY
+			t.user_id
+	) AS tc
+ON
+	u.id = tc.user_id
+    
+       <dynamic prepend="where">
+       		<isEqual property="isTouzi" prepend="and" compareValue="1">
+       			EXISTS (select t2.user_id from tb_borrow_tender t2 where t2.user_id=u.id and t2.`status`=1)
+       		</isEqual>
+       		<isEqual property="isTouzi" prepend="and" compareValue="2">
+       			NOT EXISTS (select t2.user_id from tb_borrow_tender t2 where t2.user_id=u.id and t2.`status`=1)
+       		</isEqual>
+       		<isNotEmpty property="username" prepend="and">
+       			USERNAME LIKE CONCAT('%', #username#, '%')
+       		</isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+	   	    <isNotEmpty  property="mobile" prepend="and">
+	   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+	  	    </isNotEmpty> 
+       </dynamic>
+    </select>
+    
+    <!-- 用户投资统计 -->
+        <select id="GET_COUNT_BY_SEARCHUSERTENDINFO"  parameterClass="map" resultClass="int">
+       SELECT COUNT(0) 
+       FROM
+	tb_user u left JOIN
+	(
+       SELECT t.user_id,
+              FROM_UNIXTIME(t.addtime,'%Y%m') as tendertime,
+              sum(t.account) as account 
+              from tb_borrow_tender t 
+              where t.`status`=1 
+              GROUP BY t.user_id,FROM_UNIXTIME(t.addtime,'%Y%m')
+	) AS tc
+    ON
+	u.id = tc.user_id
+       <dynamic prepend="where">
+       		<isNotEmpty property="analysisYear" prepend="and">
+       			tc.tendertime LIKE CONCAT('%', #analysisYear#, #analysisMonth#, '%')
+       		</isNotEmpty>
+       		<isNotEmpty property="username" prepend="and">
+       			USERNAME LIKE CONCAT('%', #username#, '%')
+       		</isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+	   	    <isNotEmpty  property="mobile" prepend="and">
+	   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+	  	    </isNotEmpty>        		
+       </dynamic>
+    </select>
+    
+    <select id="GET_LIST_BY_SEARCHUSERTENDINFO"  parameterClass="map" resultMap="userTenderResult">
+    	SELECT
+	u.*,tc.tendertime,tc.account
+FROM
+	tb_user u left JOIN
+	(
+       SELECT t.user_id,
+              FROM_UNIXTIME(t.addtime,'%Y%m') as tendertime,
+              sum(t.account) as account 
+              from tb_borrow_tender t 
+              where t.`status`=1 
+              GROUP BY t.user_id,FROM_UNIXTIME(t.addtime,'%Y%m')
+	) AS tc
+    ON
+	u.id = tc.user_id
+    
+       <dynamic prepend="where">
+       		<isNotEmpty property="analysisYear" prepend="and">
+       			tc.tendertime LIKE CONCAT('%', #analysisYear#, #analysisMonth#, '%')
+       		</isNotEmpty>
+       		<isNotEmpty property="username" prepend="and">
+       			USERNAME LIKE CONCAT('%', #username#, '%')
+       		</isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+	   	    <isNotEmpty  property="mobile" prepend="and">
+	   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+	  	    </isNotEmpty> 
+       </dynamic>
+    </select>
+    
+      <select id="GET_LIST_BY_SEARCHEXCELUSERTENDINFO"  parameterClass="map" resultMap="userTenderResult">
+    	SELECT
+	u.*,tc.tendertime,tc.account
+FROM
+	tb_user u left JOIN
+	(
+       SELECT t.user_id,
+              FROM_UNIXTIME(t.addtime,'%Y%m') as tendertime,
+              sum(t.account) as account 
+              from tb_borrow_tender t 
+              where t.`status`=1 
+              GROUP BY t.user_id,FROM_UNIXTIME(t.addtime,'%Y%m')
+	) AS tc
+    ON
+	u.id = tc.user_id
+    
+       <dynamic prepend="where">
+       		<isNotEmpty property="analysisYear" prepend="and">
+       			tc.tendertime LIKE CONCAT('%', #analysisYear#, #analysisMonth#, '%')
+       		</isNotEmpty>
+       		<isNotEmpty property="username" prepend="and">
+       			USERNAME LIKE CONCAT('%', #username#, '%')
+       		</isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+	   	    <isNotEmpty  property="mobile" prepend="and">
+	   			MOBILE LIKE CONCAT('%', #mobile#, '%')
+	  	    </isNotEmpty> 
+       </dynamic>
+    </select>
+    
+</sqlMap>

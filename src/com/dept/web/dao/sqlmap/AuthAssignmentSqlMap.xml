@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AuthAssignment" >
+  <typeAlias alias="authAssignmentAlias" type="com.dept.web.dao.model.AuthAssignment"/>
+  <resultMap id="authAssignmentResult" class="authAssignmentAlias" >
+    <result column="id" property="id"  />
+    <result column="item_name" property="itemName"  />
+    <result column="user_id" property="userId"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="description" property="description"  />
+  </resultMap>
+ 
+  <resultMap id="authAssignmentSearchResult" class="authAssignmentAlias" extends="authAssignmentResult">
+    <result column="username" property="username"  />
+  </resultMap>  
+  
+  <select id="GET_LIST_BY_ALL_PAGE" parameterClass="map" resultMap="authAssignmentSearchResult">
+	SELECT A.ID, A.ITEM_NAME, B.ID AS USER_ID, A.CREATED_AT, A.DESCRIPTION, B.USERNAME FROM TB_ADMIN_USER B LEFT JOIN TB_AUTH_ASSIGNMENT A
+	 ON A.USER_ID = B.ID ORDER BY A.ID DESC
+  </select>
+
+  <select id="GET_COUNT_BY_ALL_PAGE" parameterClass="map" resultClass="int">
+	SELECT COUNT(0) FROM TB_ADMIN_USER B LEFT JOIN TB_AUTH_ASSIGNMENT A
+	 ON A.USER_ID = B.ID
+  </select>
+  
+  <select id="GET_BY_USER" parameterClass="Long" resultMap="authAssignmentResult">
+	SELECT A.* FROM TB_AUTH_ASSIGNMENT A WHERE A.USER_ID = #value#
+  </select>    
+  
+  <insert id="SAVE_AUTHASSIGNMENT" parameterClass="authAssignmentAlias">
+  	 INSERT INTO TB_AUTH_ASSIGNMENT(ITEM_NAME, USER_ID, CREATED_AT, DESCRIPTION)
+  	 VALUES(#itemName#, #userId#, #createdAt#, #description#)
+      <selectKey resultClass="long" >
+  		SELECT LAST_INSERT_ID()
+      </selectKey> 	 
+  </insert>
+  
+  <update id="UPDATE_AUTHASSIGNMENT" parameterClass="authAssignmentAlias">
+  	UPDATE TB_AUTH_ASSIGNMENT
+  	<dynamic prepend="set">
+  		<isNotNull prepend="," property="itemName">
+  			ITEM_NAME = #itemName#
+  		</isNotNull>
+  		<isNotNull prepend="," property="userId">
+  			USER_ID = #userId#
+  		</isNotNull>
+  		<isNotNull prepend="," property="createdAt">
+  			CREATED_AT = #createdAt#
+  		</isNotNull>
+  		<isNotNull prepend="," property="description">
+  			DESCRIPTION = #description#
+  		</isNotNull>  		  		  	
+  	</dynamic>
+  	WHERE ID = #id#
+  </update>
+  
+  <delete id="DELETE_USER" parameterClass="Long">
+  	DELETE FROM TB_AUTH_ASSIGNMENT WHERE USER_ID = #value#
+  </delete>
+  
+</sqlMap>

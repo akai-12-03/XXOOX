@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserRecharge" >
+  <typeAlias alias="userRechargeAlias" type="com.dept.web.dao.model.UserRecharge"/>
+  <resultMap id="userRechargeResult" class="userRechargeAlias" >
+    <result column="id" property="id"  />
+    <result column="order_id" property="orderId"  />
+    <result column="account" property="account"  />
+    <result column="card_no" property="cardNo"  />
+    <result column="money_recharge" property="moneyRecharge"  />
+    <result column="remark" property="remark"  />
+    <result column="third_platform" property="thirdPlatform"  />
+    <result column="third_platform_order_id" property="thirdPlatformOrderId"  />
+    <result column="pay_source" property="paySource"  />
+    <result column="pay_result" property="payResult"  />
+    <result column="status" property="status"  />
+    <result column="created_by" property="createdBy"  />
+    <result column="updated_by" property="updatedBy"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="updated_at" property="updatedAt"  />
+    <result column="created_ip" property="createdIp"  />
+  </resultMap>
+  
+  <resultMap id="userRechargeSearchResult" class="userRechargeAlias" extends="userRechargeResult">
+  	<result column="USERNAME" property="username"  />
+  	<result column="REALNAME" property="realname"  />
+  </resultMap>
+  
+  <resultMap id="userRechargeBytotalResult" class="userRechargeAlias" >
+  	<result column="totalMoney" property="totalMoney"  />
+  </resultMap>
+  
+  <!--记录用户是否是第一次成功充值-->
+  <select id="GET_COUNT_BY_ISFIRST" resultClass="INT"  parameterClass="LONG">
+  	select count(0) from TB_USER_RECHARGE where created_by=#value# and status=1 
+  </select>
+  
+     <select id="GET_BY_ID_FOR_OFFLINE" parameterClass="Long" resultMap="userRechargeSearchResult">
+     	SELECT A.*, B.USERNAME, B.REALNAME FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID AND A.ID = #value# AND A.PAY_SOURCE = 'Offline' AND A.STATUS = 0
+     </select>
+     
+     <select id="GET_BY_ID_FOR_OFFLINE_DEDUCT" parameterClass="Long" resultMap="userRechargeSearchResult">
+     	SELECT A.*, B.USERNAME, B.REALNAME FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID AND A.ID = #value# AND A.PAY_SOURCE = 'Deduct_Offline' AND A.STATUS = 0
+     </select>
+     
+     <select id="GET_BY_USER_RECHARGE_TOTAL" parameterClass="userRechargeAlias" resultMap="userRechargeBytotalResult">
+		select SUM(money_recharge) as totalMoney  from tb_user_recharge where `status`=1 and third_platform=1
+	</select>
+	<select id="GET_BY_USER_RECHARGE_TOTALL" parameterClass="userRechargeAlias" resultMap="userRechargeBytotalResult">
+		select SUM(money_recharge) as totalMoney  from tb_user_recharge where `status`=1 and third_platform=2
+	</select>
+  
+	 <select id="GET_COUNT_BY_FOR_SEARCH" parameterClass="map" resultClass="int">
+	      SELECT COUNT(0) FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	         <isNotEmpty property="paySource" prepend="and">
+	    		A.pay_source= #paySource#
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.UPDATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.UPDATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+	        <isNotEmpty property="orderNo" prepend="and">
+	    		A.ORDER_ID = #orderNo#
+	        </isNotEmpty>		 	
+	 </select>  
+     <select id="GET_LIST_BY_FOR_SEARCH" parameterClass="map" resultMap="userRechargeSearchResult">
+	      SELECT A.*, B.USERNAME, B.REALNAME FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="paySource" prepend="and">
+	    		A.pay_source= #paySource#
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.UPDATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.UPDATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+	        <isNotEmpty property="orderNo" prepend="and">
+	    		A.ORDER_ID = #orderNo#
+	        </isNotEmpty>			 	
+		 	ORDER BY A.ID DESC
+   </select>
+   
+     <select id="GET_LIST_BY_FOR_SEARCH_OFFLINE" parameterClass="map" resultMap="userRechargeSearchResult">
+	      SELECT A.*, B.USERNAME, B.REALNAME FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID AND A.PAY_SOURCE = 'Offline'
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+		 	
+		 	ORDER BY A.ID DESC
+   </select>   
+   
+     <select id="GET_COUNT_BY_FOR_SEARCH_OFFLINE" parameterClass="map" resultClass="int">
+	      SELECT COUNT(0) FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID AND A.PAY_SOURCE = 'Offline'
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+   </select>   
+ 
+ 
+     <select id="GET_LIST_BY_FOR_SEARCH_OFFLINE_DEDUCT" parameterClass="map" resultMap="userRechargeSearchResult">
+	      SELECT A.*, B.USERNAME, B.REALNAME FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID AND A.PAY_SOURCE = 'Deduct_Offline'
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+		 	
+		 	ORDER BY A.ID DESC
+   </select>   
+   
+     <select id="GET_COUNT_BY_FOR_SEARCH_OFFLINE_DEDUCT" parameterClass="map" resultClass="int">
+	      SELECT COUNT(0) FROM TB_USER_RECHARGE A, TB_USER B WHERE A.CREATED_BY= B.ID AND A.PAY_SOURCE = 'Deduct_Offline'
+	        <isNotEmpty property="username" prepend="and">
+	    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+	        </isNotEmpty>
+	        <isNotEmpty property="realname" prepend="and">
+	    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+	        </isNotEmpty>
+		 	<isNotEmpty property="startTime" prepend="and">
+		 	    FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')>=#startTime#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="endTime" prepend="and">
+		 	   <![CDATA[  
+	             FROM_UNIXTIME(A.CREATED_AT,'%m\/%d\/%Y')<= #endTime#  
+	           ]]> 
+		 	</isNotEmpty>
+		 	<isNotEmpty  property="status" prepend="and">
+		 		A.STATUS = #status#
+		 	</isNotEmpty>
+   </select>   
+   
+   <insert id="SAVE_USERRECHARGE" parameterClass="userRechargeAlias">
+  		INSERT INTO TB_USER_RECHARGE(ORDER_ID, ACCOUNT, CARD_NO, MONEY_RECHARGE, REMARK, THIRD_PLATFORM, THIRD_PLATFORM_ORDER_ID
+  		,PAY_SOURCE, PAY_RESULT, STATUS, CREATED_BY, UPDATED_BY, CREATED_AT, UPDATED_AT, CREATED_IP)
+  		VALUES(#orderId#, #account#, #cardNo#, #moneyRecharge#, #remark#, #thirdPlatform#, #thirdPlatformOrderId#, #paySource#, #payResult#, 
+  		#status#, #createdBy#, #updatedBy#, #createdAt#, #updatedAt#, #createdIp#)
+     	<selectKey resultClass="long" >
+	  		SELECT LAST_INSERT_ID()
+	    </selectKey> 
+   </insert>   
+   
+     <update id="UPDATE_STATUS" parameterClass="userRechargeAlias">
+  	  UPDATE TB_USER_RECHARGE SET `STATUS` = #status#, PAY_RESULT = #payResult#, UPDATED_AT = #updatedAt#, UPDATED_BY = #updatedBy#
+  	  WHERE ID = #id# and CREATED_BY = #createdBy#
+  </update>
+
+ </sqlMap>

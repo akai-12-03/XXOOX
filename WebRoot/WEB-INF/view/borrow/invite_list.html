@@ -1,0 +1,62 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">还款管理</a></li>
+	  <li class="active">推荐人列表</li>
+	</ol>
+<!------------------内容区------------------->
+<div class="">
+		<form id="borrowForm" name="borrowForm" action="${admurl}/admin/borrow/invite_list.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		  <div class="form-group">
+	            开始时间：
+	     	<input type="text" class="xmdate form-control" style="width: 100px" placeholder="开始时间" id="startTime" name="startTime" value="$!startTime">	
+	     	结束时间：
+	     	<input type="text" class="xmdate form-control" style="width: 100px" placeholder="结束时间" id="endTime" name="endTime" value="$!endTime">
+      	  </div>
+      	  &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>&nbsp;&nbsp;&nbsp;<a  id="excel_borrow"  class="btn btn-default"> 导出Excel</a>
+	    <br>
+	    <br>
+	<table class="table table-bordered table-hover">
+			<thead>
+			<tr>
+			<td class="pure-table-title">推荐人用户名</td>
+			<td class="pure-table-title">推荐人真实姓名</td>
+			<td class="pure-table-title">ID</td>
+			<td class="pure-table-title">用户名</td>
+			<td class="pure-table-title">真实姓名</td>
+<!-- 			<td class="pure-table-title">业务类型</td> -->
+			<td class="pure-table-title">创建时间</td>
+			<td class="pure-table-title">总金额</td>
+			<td class="pure-table-title">操作金额</td>
+			<td class="pure-table-title">可用金额</td>
+			</tr>
+			</thead> 	                                                                                                    	                           	        
+		<tbody>
+           	#foreach($user in ${userPage.result})  
+        <tr>
+            <td>$!user.inviteUserId</td>
+            <td>$!user.inviteUsername</td>
+            <td>$!user.id</td>
+            <td>$!user.username</td>
+            <td>$!user.realname</td>
+            <td>$!dateTool.dateStr($!user.createdAt, 'yyyy-MM-dd HH:mm:ss')</td>
+            <td>$!user.moneyTotal</td>
+            <td>$!user.money</td>
+            <td>$!user.moneyUsable</td>
+         </tr>
+            #end
+         </tbody>
+	</table>
+	    #pagination($userPage 'borrowForm')
+	</form>
+	<script type="text/javascript">
+		$("#excel_borrow").click(function(){
+			var startTime=$("#startTime").val();
+			var endTime=$("#endTime").val();
+			this.href="${admurl}/admin/borrow_excel.html?startTime="+startTime+"&endTime="+endTime+"&eType=inviteUser";
+		});
+	</script>
+</div>
+<!-------------------------页脚------------------------>
+#footer()

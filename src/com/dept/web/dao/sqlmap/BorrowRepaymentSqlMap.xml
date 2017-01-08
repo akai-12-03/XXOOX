@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="BorrowRepayment" >
+  <typeAlias alias="borrowRepaymentAlias" type="com.dept.web.dao.model.BorrowRepayment"/>
+  <resultMap id="BorrowRepaymentResult" class="borrowRepaymentAlias" >
+    <result column="id" property="id"  />
+    <result column="status" property="status"  />
+    <result column="webstatus" property="webstatus"  />
+    <result column="rep_order" property="repOrder"  />
+    <result column="borrow_id" property="borrowId"  />
+    <result column="repayment_time" property="repaymentTime"  />
+    <result column="repayment_yestime" property="repaymentYestime"  />
+    <result column="repayment_account" property="repaymentAccount"  />
+    <result column="repayment_yesaccount" property="repaymentYesaccount"  />
+    <result column="interest" property="interest"  />
+    <result column="capital" property="capital"  />
+    <result column="forfeit" property="forfeit"  />
+    <result column="reminder_fee" property="reminderFee"  />    
+    <result column="late_days" property="lateDays"  />
+    <result column="late_interest" property="lateInterest"  />
+    <result column="addtime" property="addtime"  />
+    <result column="addip" property="addip"  />
+    <result column="updatetime" property="updatetime"  />
+    <result column="updateip" property="updateip"  />       
+  </resultMap>
+  
+   <resultMap id="BorrowRepaymentResult2" class="borrowRepaymentAlias" extends="BorrowRepaymentResult">
+    <result column="borrowname" property="borrowname"  />       
+    <result column="username" property="username"  />  
+  </resultMap>
+  <select id="GET_LIST_BY_STATUS" parameterClass="Integer" resultMap="BorrowRepaymentResult">
+  	SELECT * FROM TB_BORROW_REPAYMENT WHERE `STATUS` = #value#  and webstatus=1 ORDER BY ID ASC
+  </select>
+  
+  <select id="GET_COUNT_BY_SUB_BORROW_AND_REPAYMENT" parameterClass="Long" resultClass="int">
+    <![CDATA[
+		SELECT COUNT(0) AS NUM FROM TB_BORROW_REPAYMENT WHERE BORROW_ID =#value# AND `STATUS` = 1
+    ]]>
+  </select>
+  
+  <insert id="SAVE_BORROWREPAYMENT" parameterClass="borrowRepaymentAlias">
+  	INSERT INTO TB_BORROW_REPAYMENT(`STATUS`, WEBSTATUS, REP_ORDER, BORROW_ID, REPAYMENT_TIME, REPAYMENT_YESTIME, REPAYMENT_ACCOUNT,
+  		REPAYMENT_YESACCOUNT, INTEREST, CAPITAL, FORFEIT, REMINDER_FEE, LATE_DAYS, LATE_INTEREST, ADDTIME, ADDIP, UPDATETIME, UPDATEIP)
+  	VALUES(#status#, #webstatus#,#repOrder#,#borrowId#,#repaymentTime#,#repaymentYestime#,#repaymentAccount#,
+  		#repaymentYesaccount#,#interest#,#capital#, #forfeit#,#reminderFee#,#lateDays#,#lateInterest#,#addtime#,#addip#, #updatetime#, #updateip#)
+ 		 <selectKey resultClass="long" >
+ 			SELECT LAST_INSERT_ID()
+  	     </selectKey>  
+  </insert>
+  
+  <update id="UPDATE_MODIFY_REPAYMENT_YES" parameterClass="borrowRepaymentAlias">
+  		 update TB_borrow_repayment set status=#status#,repayment_yestime=#repaymentYestime#,repayment_yesaccount=#repaymentYesaccount# where id=#id#
+  </update>
+  
+  <select id="GET_LIST_BY_REPAYMENTLIST" parameterClass="map" resultMap="BorrowRepaymentResult2">
+		SELECT
+			p1.*, p2. NAME AS borrowname,
+			p3.username
+		FROM
+			tb_borrow_repayment AS p1
+		LEFT JOIN tb_borrow AS p2 ON p1.borrow_id = p2.id
+		LEFT JOIN tb_user AS p3 ON p2.user_id = p3.id
+		<dynamic prepend="where">
+			<isNotEmpty property="username" prepend="and">
+    				p3.username LIKE CONCAT('%', #username#, '%')
+        	</isNotEmpty>
+        	<isNotEmpty property="borrowname" prepend="and">
+    				p2.name LIKE CONCAT('%', #borrowname#, '%')
+        	</isNotEmpty>
+	  		 <isEqual property="type" compareValue="repayment" prepend="and">
+	  				p1.status=0 and p1.webstatus=0
+	  		</isEqual>
+	  		 <isEqual property="type" compareValue="repaymentyes" prepend="and">
+	  				p1.status=1 and p1.webstatus=1
+	  		</isEqual>
+	  	</dynamic>
+	  	order by p1.addtime desc
+  </select>
+  
+   <select id="GET_COUNT_BY_REPAYMENTLIST" parameterClass="map" resultClass="int">
+   		SELECT count(*)
+		FROM
+			tb_borrow_repayment AS p1
+		LEFT JOIN tb_borrow AS p2 ON p1.borrow_id = p2.id
+		LEFT JOIN tb_user AS p3 ON p2.user_id = p3.id
+		<dynamic prepend="where">
+		 	<isNotEmpty property="username" prepend="and">
+    				p3.username LIKE CONCAT('%', #username#, '%')
+        	</isNotEmpty>
+        	<isNotEmpty property="borrowname" prepend="and">
+    				p2.name LIKE CONCAT('%', #borrowname#, '%')
+        	</isNotEmpty>
+	       <isEqual property="type" compareValue="repayment" prepend="and">
+	  				p1.status=0 and p1.webstatus=0
+	  		</isEqual>
+	  		 <isEqual property="type" compareValue="repaymentyes" prepend="and">
+	  				p1.status=1 and p1.webstatus=1
+	  		</isEqual>
+	  	</dynamic>
+  </select>
+</sqlMap>

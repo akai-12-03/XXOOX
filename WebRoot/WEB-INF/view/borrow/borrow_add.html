@@ -1,0 +1,423 @@
+#header()
+	<script type="text/javascript" src="${admurl}/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="${admurl}/kindeditor/lang/zh_CN.js"></script>
+	<!-- 配置文件 -->
+	<!-- 实例化编辑器 -->
+	<ol class="breadcrumb">
+		<li><a href="$admurl/admin/welcome.html">首页</a></li>
+		<li><a href="#">理财管理</a></li>
+		<li><a href="#">产品列表</a></li>
+		<li class="active">发布借款标</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/borrow/opborrow_add.html" method="post" enctype="multipart/form-data">
+			<input type="hidden" id="opt" name="opt" value="add">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">借款标题</label>
+				<div class="col-sm-3">
+					<input type="text" class="form-control" id="name" name="name" value="$!borrow.name" onkeyup="value=value.replace(/[\]/g,'') " 
+						maxlength=10 name="Numbers">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">借款类型</label>
+				<div class="col-sm-3">
+					<select id="borrow_type" name="borrow_type" onchange="selType(this.value)">
+						<option value="">请选择借款类型</option>
+						<option #if($!borrow.borrowType==1) selected="selected" #end value="1">购车垫资标</option>
+						<option #if($!borrow.borrowType==2) selected="selected" #end value="2">汽车质押标</option>
+						<option #if($!borrow.borrowType==3) selected="selected" #end value="3">汽车抵押标</option>
+						<option #if($!borrow.borrowType==4) selected="selected" #end value="4">企业借款标</option>
+						<option #if($!borrow.borrowType==5) selected="selected" #end value="5">新手标</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="form-group" id="nowPerson">
+				<label for="username" class="col-sm-2 control-label">借款人</label>
+				<div class="col-sm-3">
+					<input type="hidden" id="borrower" name="borrower">
+					<input type="text" class="form-control" id="username" name="username">
+				</div>
+				<button type="button" id="get-suggest" class="right-button">搜索</button>
+			</div>
+			
+			<div class="form-group" style="display: none" id="borrowPerson">
+				<label for="inputEmail3" class="col-sm-2 control-label">垫资标借款人</label>
+				<div class="col-sm-3">
+					<input type="text" class="form-control" id="mortgagor" name="mortgagor" value="$!borrow.mortgagor" onkeyup="value=value.replace(/[\]/g,'') " 
+						maxlength=10 name="Numbers">
+				</div>
+			</div>
+			<style>
+				.findBTN{
+                     vertical-align: top;
+				}
+				.findGlass{
+					display: inline-block;
+					width: 160px;
+					background-color: whitesmoke;
+					border: 1px solid #dcdcdc;
+					display: none;
+					position: absolute;
+					left: 710px;
+					top: 0;
+					z-index:999;
+				}
+				.findDate{
+					text-align: center;
+					padding:2px 0;
+					border-bottom: 1px solid #dcdcdc;
+					cursor: pointer;
+				}
+			</style>
+			<div class="form-group" style="display: none;position: relative;" id="receivePerson">
+				<label for="username" class="col-sm-2 control-label">垫资标收款人</label>
+				<div class="col-sm-3">
+					<input type="text" class="form-control" id="receive" name="receivePerson">
+				</div>
+				<button type="button" class="findBTN" id="receiveBTN">搜索</button>
+				<span class="findGlass" id="receiveGlass"></span>
+			</div>
+			<div class="form-group" style="display: none;position: relative;" id="repayPerson">
+				<label for="username" class="col-sm-2 control-label">垫资标还款人</label>
+				<div class="col-sm-3">
+					<input type="text" class="form-control" id="repay" name="repayPerson">
+				</div>
+				<button type="button"  class="findBTN" id="repayBTN">搜索</button>
+				<span class="findGlass" id="repayGlass"></span>
+			</div>
+			<!-- <div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">借款用途</label>
+				<div class="col-sm-3">
+					<select id="borrow_use" name="borrow_use">
+						<option #if($!borrow.borrowUse==1) selected="selected" #end value="1">车贷</option>
+						
+						<option #if($!borrow.borrowUse==2) selected="selected" #end value="2">房贷</option>
+						<option #if($!borrow.borrowUse==3) selected="selected" #end value="3">其他</option>
+					</select>
+				</div>
+			</div> -->
+			<!-- <div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">风险评级</label>
+				<div class="col-sm-3">
+					<select id="fxpj" name="fxpj">
+						<option #if($!borrow.fxpj==1) selected="selected" #end value="1">R1</option>
+						<option #if($!borrow.fxpj==2) selected="selected" #end value="2">R2</option>
+						<option #if($!borrow.fxpj==3) selected="selected" #end value="3">R3</option>
+						<option #if($!borrow.fxpj==3) selected="selected" #end value="4">R4</option>
+					</select>
+				</div>
+			</div> -->
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">是否天标</label>
+			<div class="col-sm-3">
+				<label class="radio-inline">
+					<input type="radio" name="isDay" id="day1" value="1" #if($!borrow.isDay==1) checked="checked" #end> 是
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="isDay" id="day2" value="0" #if($!borrow.isDay==0 || $borrow.isDay == '') checked="checked" #end> 不是
+				</label>
+			</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">还款方式</label>
+				<div class="col-sm-3">
+					<select id="repayment_style" name="repayment_style">
+						<option #if($!borrow.borrowStyle==1) selected="selected" #end value="1">等额本息</option>
+						<option #if($!borrow.borrowStyle==2) selected="selected" #end value="2">到期还本还息</option>
+						<option #if($!borrow.borrowStyle==3) selected="selected" #end value="3">按月付息到期还本</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">借款金额</label>
+			<div class="col-sm-3">
+				<input type="text" step="0.01" class="form-control" id="account" name="account" value="$!borrow.account" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+			</div>
+			</div>
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">年利率</label>
+			<div class="col-sm-3">
+				<input type="text" class="form-control" id="apr" name="apr" value="$!borrow.apr" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+			</div>
+			<label  class="right-label">%</label>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">借款期限</label>
+				<div class="col-sm-3">
+					<input type="text" class="form-control" id="timelimit" name="timelimit" value="$!borrow.timeLimit" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+				</div>
+				<label for="timelimit" class="right-label"></label>
+			</div>
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">最低投标金额</label>
+			<div class="col-sm-3">
+				<input type="text"  class="form-control" id="lowest_account" name="lowest_account" value="$!borrow.lowestAccount" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+			</div>
+			</div>
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">最高投标金额</label>
+			<div class="col-sm-3">
+				<input type="text" class="form-control" id="most_account" name="most_account" value="$!borrow.mostAccount" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+			</div>
+			</div>
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">有效时间</label>
+			<div class="col-sm-3">
+				<select id="valid_time" name="valid_time">
+				<option #if($!borrow.validTime==1) selected="selected" #end value="1">1天</option>
+				<option #if($!borrow.validTime==2) selected="selected" #end value="2">2天</option>
+				<option #if($!borrow.validTime==3) selected="selected" #end value="3">3天</option>
+				<option #if($!borrow.validTime==4) selected="selected" #end value="4">4天</option>
+				<option #if($!borrow.validTime==5) selected="selected" #end value="5">5天</option>
+				<option #if($!borrow.validTime==6) selected="selected" #end value="6">6天</option>
+				<option #if($!borrow.validTime==7) selected="selected" #end value="7">7天</option>
+				<option #if($!borrow.validTime==8) selected="selected" #end value="8">8天</option>
+				<option #if($!borrow.validTime==9) selected="selected" #end value="9">9天</option>
+				<option #if($!borrow.validTime==10) selected="selected" #end value="10">10天</option>
+				<option #if($!borrow.validTime==11) selected="selected" #end value="11">11天</option>
+				<option #if($!borrow.validTime==12) selected="selected" #end value="12">12天</option>
+				<option #if($!borrow.validTime==13) selected="selected" #end value="13">13天</option>
+				<option #if($!borrow.validTime==14) selected="selected" #end value="14">14天</option>
+				<option #if($!borrow.validTime==15) selected="selected" #end value="15">15天</option>
+				</select>
+			</div>
+			</div>
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">是否有奖励</label>
+			<div class="col-sm-3">
+				<label class="radio-inline">
+					<input type="radio" name="award" id="awardstatus1" value="0" #if($!borrow.award==0) checked="checked" #end> 没有
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="award" id="awardstatus2" value="1" checked="checked">按金额 
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="award" id="awardstatus3" value="2" checked="checked">按比例
+				</label>
+			</div>
+			</div>
+			<div class="form-group award-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">按比例奖励 </label>
+				<div class="col-sm-2">
+					<input type="number"  step="0.01" class="form-control" id="part_account" name="part_account" value="$!borrow.partAccount">
+				</div>
+				<label class="right-label">%</label>
+			</div>
+			<div class="form-group award-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">按固定金额奖励 </label>
+				<div class="col-sm-3">
+					<input type="number" step="0.01" class="form-control" id="funds" name="funds" value="$!borrow.funds">
+				</div>
+			</div>
+			
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">借款手续费</label>
+			<div class="col-sm-3">
+				<input type="text" step="0.01" class="form-control" id="borrow_fee" name="borrow_fee" value="$!borrow.borrow_fee" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+			</div>
+			<label  class="right-label">%</label>
+		    </div>
+			<!-- <div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">是否定向标</label>
+			<div class="col-sm-3">
+				<label class="radio-inline">
+					<input type="radio" name="ispwd" id="pwdstatus1" value="1" > 是
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="ispwd" id="pwdstatus2" value="0" checked="checked"> 不是
+				</label>
+			</div> 
+			</div>-->
+			<input type="hidden" name="ispwd" id="pwdstatus2" value="0" >	
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">推荐至首页</label>
+			<div class="col-sm-3">
+				<select id="index_status" name="index_status">
+				<option #if($!borrow.validTime==0) selected="selected" #end value="0">否</option>
+				<option #if($!borrow.validTime==1) selected="selected" #end value="1">是</option>
+				</select>
+			</div>
+			</div>
+			
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">是否可以转让</label>
+			<div class="col-sm-3">
+				<select id="isTran" name="isTran">
+				<option #if($!borrow.isTran==0) selected="selected" #end value="0">否</option>
+				<option #if($!borrow.isTran==1) selected="selected" #end value="1">是</option>
+				</select>
+			</div>
+			</div>
+			
+			<div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">转让手续费</label>
+			<div class="col-sm-3">
+				<input type="text" step="0.01" class="form-control" id="borrow_marketFee" name="marketFee" value="$!borrow.marketFee" onkeyup="value=value.replace(/[^\+ \d.]/g,'')">
+			</div>
+			<label  class="right-label">%</label>
+		    </div>
+			
+			
+			<!-- <div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">信用等级</label>
+			<div class="col-sm-3">
+				<select id="trust_level" name="trust_level">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+				</select>
+			</div>
+			</div> -->
+			<!-- <div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">标题名称:</label>
+				<div class="col-sm-3">
+					<input id="xmxq" name="contents"/>
+				</div>
+			</div> -->
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">项目详情</label>
+				<div class="col-sm-3">
+					<textarea id="editor_id" name="content" style="width:700px;height:300px;">
+					</textarea>
+				</div>
+			</div>
+			<!-- <div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">标题名称:</label>
+				<div class="col-sm-3">
+					<input id="xmxq" name="cpxqs"/>
+				</div>
+			</div> -->
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">风险控制</label>
+				<div class="col-sm-3">
+					<textarea id="editor_id2" name="cpxq" style="width:700px;height:300px;">
+					</textarea>
+				</div>
+			</div>
+			
+			<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-primary">创建</button>
+			</div>
+			</div>
+		</form>
+	</div>
+	<div id="suggest-list"></div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	<script>
+        $(function(){
+            $("#receiveBTN").on("click",function(){
+                $("#suggest-list").hide();
+                $("#repayGlass").hide();
+                $("#receiveGlass").css("display","inline-block");
+                var userName=$("#receive").val();
+                ajaxUserName('receiveGlass',userName);
+            });
+            $("#repayBTN").on("click",function(){
+                $("#suggest-list").hide();
+                $("#receiveGlass").hide();
+                $("#repayGlass").css("display","inline-block");
+                var userName=$("#repay").val();
+                ajaxUserName('repayGlass',userName);
+            });
+        });
+	        KindEditor.ready(function(K) {
+                window.editor = K.create('#editor_id', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                	
+                window.editor = K.create('#editor_id2', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                window.editor = K.create('#editor_id3', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                window.editor = K.create('#editor_id4', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                window.editor = K.create('#editor_id5', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+	        });
+	        
+	        function selType(selId)
+	        {
+	        	//alert(selId);
+	        	if(selId==1)
+	        	{
+	        		//alert("垫资标");
+	        		$("#nowPerson").hide();
+	        		$("#borrowPerson").show();
+	        		$("#receivePerson").show();
+	        		$("#repayPerson").show();
+	        	}
+	        	else
+	        	{
+	        		$("#nowPerson").show();
+	        		$("#borrowPerson").hide();
+	        		$("#receivePerson").hide();
+	        		$("#repayPerson").hide();
+	        	}
+	        }
+	        
+	        
+	        //http://183.129.157.218:8095/qgfCms/searchBorrower.html?username=
+	     function ajaxUserName(id,userName)
+	      {
+	        var url='${admurl}';
+	    	 jQuery.ajax({
+	 			'url': url+'/searchBorrower.html',
+	 			'type': 'get',
+	 			'dataType': 'json',
+	 			'data': {
+	 				'username': userName
+	 			},
+	 			success: function(res){
+	 				if(res.status === 1 && res.data.length > 0){
+	 					var html = '';
+	 					for(var i=0,len=res.data.length;i<len;i++){
+	 						html+='<div class="findDate">'+res.data[i]['name']+'</div>'
+	 						
+	 					}
+	 					$('#'+id).html(html);
+                        var receiveGlass=document.getElementById("receiveGlass");
+                        var repay=document.getElementById("repayGlass");
+                        receiveGlass.addEventListener("click",handle,false);
+                        repay.addEventListener("click",handleTwo,false);
+                        function handle(e){
+                            $("#receive").val($(e.target).text());
+                            $("#receiveGlass").hide();
+                        }
+                        function handleTwo(e){
+                            $("#repay").val($(e.target).text());
+                            $("#repayGlass").hide();
+                        }
+	 				}
+	 			},
+	 			error: function(err){
+	 				console.log(err);
+	 			}
+	 		})
+	      }
+	     
+	        	
+	</script>  
+
+<script>seajs.use('borrow/add');</script>
+#footer()

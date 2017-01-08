@@ -1,0 +1,61 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">报表管理</a></li>
+	  <li class="active">投标情况</li>
+	</ol>
+<!------------------内容区------------------->
+<div class="">
+		<form id="tbqkForm" name="tbqkForm" action="$admurl/admin/tbqklist.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="status" name="status" value="$!status" />
+		  <div class="form-group">
+		   标ID：		  
+	      <input type="text" class="form-control" style="width: 180px" placeholder="标ID" name="id" value="$!id">
+	             投资人：		  
+	      <input type="text" class="form-control" style="width: 180px" placeholder="投资人" name="username" value="$!username">
+	             开始时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="充值时间" name="startTime" value="$!startTime">	
+      	  结束时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="审核时间" name="endTime" value="$!endTime">	
+      	  </div>
+      	  &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>
+	    <br>
+	    <br>
+	<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+			<td class="pure-table-title">标ID</td>
+			<td class="pure-table-title">标名</td>
+			<td class="pure-table-title">利润（%）</td>
+			<td class="pure-table-title">投资人</td>
+			<td class="pure-table-title">投资金额</td>
+			<td class="pure-table-title">利息</td>
+			</tr>
+			</thead> 	                                                                                                    	                           	        
+		<tbody>
+           	#foreach($tbqk in ${tbqktpage.result})  
+        <tr>
+            <td>$!tbqk.id</td>
+            <td>$!tbqk.name</td>
+            <td>$!tbqk.apr</td>
+            <td>$!tbqk.username</td>
+            <td>$!tbqk.account</td>
+            <td>$!tbqk.interest</td>
+         </tr>
+            #end
+         </tbody>
+	</table>
+	    #pagination($tbqktpage 'tbqkForm')
+	</form>
+<form action="$admurl/admin/tbqklist.html" method="post" style="position:  -13px; padding-right:36px;  text-align: right;">
+			<input type="hidden" name="page" #if($!page) value="$page" #else value="1" #end/>
+			<input type="hidden" name="excel" value="excel" />
+			<input type="hidden" name="username" value="$!username">
+			<input type="hidden" name="startTime" value="$!startTime">	
+			<input type="hidden" name="endTime" value="$!endTime">	
+			<input type="submit" value="导出">
+		</form>
+</div>
+<!-------------------------页脚------------------------>
+#footer()

@@ -1,0 +1,96 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">支付管理</a></li>
+	  <li><a href="${admurl}/admin/withdraw_list.html">提现列表</a></li>
+	  <li class="active">审核提现</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/withdraw_verify.html?opt=upd" id="verifyform" name="verifyform" method="post">
+		  <input type="hidden" name="wid" id="wid" value="$!wid" />
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现用户名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!uw.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现用户真实姓名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!uw.realname</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现金额</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!uw.moneyWithdraw</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现银行</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!uw.cardName</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现卡号</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!uw.cardNo</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现申请时间</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!dateTool.dateStr2($!uw.createdAt, 'yyyy-MM-dd HH:mm:ss')</p>
+		    </div>
+		  </div>	  		  
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">状态</label>
+			<label class="radio-inline">
+			  <input type="radio" name="status" id="status1" value="1" #if($!uw.status==1 || $!uw.status==0) checked="checked" #end> 审核通过
+			</label>
+			<label class="radio-inline">
+			  <input type="radio" name="status" id="status2" value="2" #if($!uw.status==2) checked="checked" #end> 审核不通过
+			</label>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">审核备注</label>
+		    <div class="col-sm-3">
+		      <input type="text"  class="form-control" id="remark" name="remark" value="$!uw.remark" placeholder="必须要填">
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="tijiao">提交</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+	<script type="text/javascript">
+	
+	$("#tijiao").click(function(){
+		swal({
+			  title: "您确认这次审核操作吗?",
+			  type: "warning",
+			  showCancelButton: true,
+			  confirmButtonColor: "#DD6B55",
+			  confirmButtonText: "确认",
+			  cancelButtonText: "取消",
+			  closeOnConfirm: false
+			},
+			function(){
+			  $("#verifyform").submit();
+			});
+		
+	});
+
+	</script>
+
+
+	
+#footer()

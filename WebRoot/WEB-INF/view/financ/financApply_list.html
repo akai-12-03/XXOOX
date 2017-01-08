@@ -1,0 +1,142 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">融资管理</a></li>
+	  <li class="active">融资申请列表</li>
+	</ol>		
+	<div class="">
+		<form id="financForm" name="financForm" action="$admurl/admin/financ/financApply_list.html" class="navbar-form" method="post">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<div class="form-group">
+		    ID:
+		    <input type="text" class="form-control" style="width: 180px" placeholder="id" name="id" value="$!id">
+		     手机号码:
+	    <input type="tel" class="form-control" placeholder="手机号" name="phone" value="$!phone">	
+	       	 开始时间：
+	     	<input type="text" class="xmdate form-control" style="width: 100px" placeholder="开始时间" name="startTime" value="$!startTime">	
+	     	结束时间：
+	     	<input type="text" class="xmdate form-control" style="width: 100px" placeholder="结束时间" name="endTime" value="$!endTime">
+			  <br>
+	  		  <br>
+			状态:
+			<select class="form-control"  name="status" >
+			  <option #if($!status=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!status==0) selected="selected"  #end value="0" >未付定金</option>
+			  <option #if($!status==1) selected="selected"  #end value="1" >已付定金</option>
+			  <option #if($!status==2) selected="selected"  #end value="6" >审核不通过</option>
+			  <option #if($!status==3) selected="selected"  #end value="3" >发标中</option>
+			  <option #if($!status==3) selected="selected"  #end value="4" >融资中</option>
+			  <option #if($!status==3) selected="selected"  #end value="5" >已还款</option>
+			</select>
+			类型:
+			<select class="form-control"  name="types" >
+			  <option #if($!status=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!status==1) selected="selected"  #end value="1" >个人</option>
+			  <option #if($!status==2) selected="selected"  #end value="2" >企业</option>
+			</select>
+			&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>
+      	</div>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>编号</th>
+					<th>类型</th>
+					<th>融资人</th>
+					<th>联系方式</th>
+					<th>申请金额</th>
+					<th>申请类别</th>
+					<th>担保方式</th>
+					<th>申请时间</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($fin in ${financingApplyPage.result})  
+				<tr>
+					<td>$!fin.id</td>
+					<td>
+						#if($!fin.types==1)
+						个人申请
+						#elseif($!fin.types==2)
+						企业申请
+						#end
+					</td>
+					<td>$!fin.username</td>
+					<td>$!fin.phone</td>
+					<td>$!fin.apply_money</td>
+					<td>
+						#if($!fin.apply_type==1)
+						信用卡
+						#elseif($!fin.apply_type==2)
+						个人消费贷款
+						#elseif($!fin.apply_type==3)
+						个人经营贷款
+						#elseif($!fin.apply_type==4)
+						活动资金贷款
+						#elseif($!fin.apply_type==5)
+						经营性物业贷款
+						#elseif($!fin.apply_type==6)
+						收益权转让
+						#end
+					</td>
+					<td>
+						#if($!fin.apply_guarantee==1)
+						房屋抵押
+						#elseif($!fin.apply_guarantee==2)
+						汽车抵押
+						#elseif($!fin.apply_guarantee==3)
+						无
+						#elseif($!fin.apply_guarantee==4)
+						固定资产抵押
+						#elseif($!fin.apply_guarantee==5)
+						第三方担保
+						#elseif($!fin.apply_guarantee==6)
+						应收账款质押
+						#elseif($!fin.apply_guarantee==7)
+						收益权质押
+						#end
+					</td>
+					<td>$!dateTool.dateStr2($!fin.addtime, 'yyyy-MM-dd')</td>
+					<td> 
+						#if($!fin.status==0)
+						未付定金
+						#elseif($!fin.status==1)
+						已付定金
+						#elseif($!fin.status==6)
+						审核不通过
+						#elseif($!fin.status==3)
+						发标中
+						#elseif($!fin.status==4)
+						融资中
+						#elseif($!fin.status==5)
+						已还款
+						#end
+					</td>
+					
+					
+					<td><a href="$admurl/admin/financ/financApply_detail.html?bid=$!fin.id">详情</a>
+						#if($!fin.status==1)
+						| <a href="$admurl/admin/financ/financApply_veifyF.html?bid=$!fin.id&pid=1">初审</a>
+						#elseif($!fin.status==3)
+						| <a href="$admurl/admin/financ/financApply_veifyF.html?bid=$!fin.id&pid=2">复审</a>
+						#elseif($!fin.status==4)
+						| <a href="$admurl/admin/financ/financApply_veifyF.html?bid=$!fin.id&pid=3">终审</a>
+						#end
+					</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($financingApplyPage 'financForm')
+		</form>
+	</div>
+	
+	
+	
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end	
+#footer()

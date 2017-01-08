@@ -1,0 +1,81 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">用户管理</a></li>
+	  <li class="active">前台用户投资统计</li>
+	</ol>
+	<div class="">
+		<form id="userForm" name="userForm" action="$admurl/admin/member/userTenderAnalysis.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<div class="form-group">
+		用户名:
+	    <input type="text" class="form-control" placeholder="用户名" name="username" id="username" value="$!username">
+	    真实姓名:
+	    <input type="text" class="form-control" placeholder="真实姓名" name="realname" id="realname" value="$!realname">
+	    手机号码:
+	    <input type="tel" class="form-control" placeholder="手机号" name="mobile" id="mobile" value="$!mobile">	
+	    统计日期:
+	        <input type="text" class="form-control" placeholder="年（YYYY）" name="analysisYear" id="analysisYear" value="$!analysisYear" maxlength="4">年
+	    	<select name="analysisMonth" id="analysisMonth">
+	    		<option value="">全部</option>
+	    		<option value="01" #if($!analysisMonth=='01')selected #end>01</option>
+	    		<option value="02" #if($!analysisMonth=='02')selected #end>02</option>
+	    		<option value="03" #if($!analysisMonth=='03')selected #end>03</option>
+	    		<option value="04" #if($!analysisMonth=='04')selected #end>04</option>
+	    		<option value="05" #if($!analysisMonth=='05')selected #end>05</option>
+	    		<option value="06" #if($!analysisMonth=='06')selected #end>06</option>
+	    		<option value="07" #if($!analysisMonth=='07')selected #end>07</option>
+	    		<option value="08" #if($!analysisMonth=='08')selected #end>08</option>
+	    		<option value="09" #if($!analysisMonth=='09')selected #end>09</option>
+	    		<option value="10" #if($!analysisMonth=='10')selected #end>10</option>
+	    		<option value="11" #if($!analysisMonth=='11')selected #end>11</option>
+	    		<option value="12" #if($!analysisMonth=='12')selected #end>12</option>
+	    	</select>月
+      	</div>
+      	  <button type="submit" class="btn btn-default">搜索</button>&nbsp;&nbsp;&nbsp;<a  id="excel_borrow"  class="btn btn-default"> 导出Excel</a>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名</th>
+					<th>手机号</th>
+					<th>真实姓名</th>
+					<th>身份证</th>
+					<th>投资年月</th>
+					<th>投资总额</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($user in ${userpage.result})  
+				<tr>
+					<td>$!user.id</td>
+					<td>$!user.username</td>
+					<td>$!user.mobile</td>
+					<td>$!user.realname</td>
+					<td>$!user.idCard</td>
+					<td>$!user.tendertime</td>
+					<td>$!user.account</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($userpage 'userForm')
+		
+		</form>
+	</div>
+<script type="text/javascript">
+		$("#excel_borrow").click(function(){
+			var username=$("#username").val();
+			var realname=$("#realname").val();
+			var mobile=$("#mobile").val();
+			var analysisYear=$("#analysisYear").val();
+			var analysisMonth=$("#analysisMonth").val();
+			this.href="${admurl}/admin/member/userTenderAnalysisExcel.html?username="+username+"&realname="+realname+"&mobile="+mobile+"&analysisYear="+analysisYear+"&analysisMonth="+analysisMonth;
+		});
+	</script>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end	
+#footer()

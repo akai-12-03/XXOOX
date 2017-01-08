@@ -1,0 +1,57 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li class="active">配资设定</li>
+	</ol>
+	<ul class="nav nav-pills">
+	  <li role="presentation" #if(!$status) class="active" #end><a href="$admurl/admin/plan/record.html">分配账号</a></li>
+	  <li role="presentation" #if($!status==1) class="active" #end><a href="$admurl/admin/plan/record.html?status=beapproved">待批准</a></li>
+	  <li role="presentation" #if($!status==2) class="active" #end><a href="$admurl/admin/plan/record.html?status=running">运行中</a></li>
+	  <li role="presentation" #if($!status==3) class="active" #end><a href="$admurl/admin/plan/record.html?status=finished">已完结</a></li>
+	</ul>
+	<br>
+	<div class="">
+		<form id="plansetForm" name="plansetForm" action="$admurl/admin/plan/setshow.html">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>类型</th>
+					<th>配资倍率</th>
+					<th>状态</th>
+					<th>创建人</th>
+					<th>批准人</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($set in ${setpage.result})  
+				<tr>
+					<td>$!set.id</td>
+					#if($!set.type==1)
+					<td>按天配资</td>
+					#elseif($!set.type==2)
+					<td>按月配资</td>
+					#else
+					<td>免费体验</td>
+					#end
+					<td>$!set.power</td>
+					#if($!set.status==0)
+					<td>新建</td>
+					#else
+					<td>批准</td>
+					#end
+					<td>$!set.userCreate</td>
+					<td>$!set.userOperate</td>
+					<td></td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($setpage 'plansetForm')
+		
+		</form>
+	</div>
+	
+#footer()

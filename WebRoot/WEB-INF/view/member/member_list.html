@@ -1,0 +1,126 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">用户管理</a></li>
+	  <li class="active">前台用户列表</li>
+	</ol>
+	<div class="">
+		<form id="userForm" name="userForm" action="$admurl/admin/member/webuser.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="ctype" name="ctype" value="$!ctype" />
+		<div class="form-group">
+		用户名:
+	    <input type="text" class="form-control" placeholder="用户名" name="username" id="username" value="$!username">
+	    真实姓名:
+	    <input type="text" class="form-control" placeholder="真实姓名" name="realname" id="realname" value="$!realname">
+	    手机号码:
+	    <input type="tel" class="form-control" placeholder="手机号" name="mobile" id="mobile" value="$!mobile">	
+	    是否投资过:
+	    	<select name="isTouzi" id="isTouzi">
+	    		<option value="">全部</option>
+	    		<option value="1" #if($!isTouzi=='1')selected #end>投资过</option>
+	    		<option value="2" #if($!isTouzi=='2')selected #end>未投资</option>
+	    	</select>
+      	</div>
+      	  <button type="submit" class="btn btn-default">搜索</button>&nbsp;&nbsp;&nbsp;<a  id="excel_borrow"  class="btn btn-default"> 导出Excel</a>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名</th>
+<!-- 					<th>用户角色ID</th> -->
+<!-- 					<th>用户状态</th> -->
+					<th>手机号</th>
+<!-- 					<th>邮箱</th> -->
+					<th>真实姓名</th>
+					<th>身份证</th>
+					<!-- <th>性别</th>
+					<th>生日</th> -->
+					<th>推荐人</th>
+					<th>注册时间</th>
+					<th>是否实名</th>
+					<th>总投资额</th>
+					<th>未偿还本金</th>
+					<th>未偿还利息</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($user in ${userpage.result})  
+				<tr>
+					<td>$!user.id</td>
+					<td>$!user.username</td>
+<!-- 					<td>$!user.role</td> -->
+<!-- 					<td>$!user.status</td> -->
+					<td>$!user.mobile</td>
+<!-- 					<td>$!user.email</td> -->
+					<td>$!user.realname</td>
+					<td>$!user.idCard</td>
+					<!-- 
+					<td>$!user.sex</td>
+					<td>$!user.birthday</td>
+					 -->
+					 <td><input type="hidden" value="$!user.id" id="U$index"/>
+					 <input id="I$index" value="$!user.inviteUsername" style="width:90px;" type="text" /> 
+					 &nbsp;<button  onclick="btnSave($index)">保存</button></td>
+					<td>$dateTool.dateStr($!user.createdAt, 'yyyy-MM-dd')</td>
+					<td>#if($!user.realVerifyStatus==0) 未认证 #elseif($!user.realVerifyStatus==1) 已认证 #else #end</td>
+<!-- 					<td>#if($!user.realVerifyStatus==0) <a href="$!admurl/admin/member/ideuser.html?uid=$!user.id">认证</a>#else -- #end</td> -->
+					<td>$!user.account</td>
+					<td>$!user.capital</td>
+					<td>$!user.interest</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($userpage 'userForm')
+		
+		</form>
+	</div>
+		<script type="text/javascript">
+		 function btnSave( index){
+			 var userId=$("#U"+index).val();
+			 var inviteId=$("#I"+index).val();
+			if(inviteId==""){
+				inviteId=0;
+				alert('请填入推荐人用户名');
+				return;
+			}
+			 if(confirm("您确定要 保存修改吗？"))
+			        jQuery.ajax({
+			        	type: "post", 
+			            url: ROOT_URL + "/admin/upInvite.html",
+			            dataType: "json",
+			            async:false, 
+			            data:{userId:userId,inviteId:inviteId},
+			            success: function(res){
+			               if(res==1){
+			            	   alert('修改成功！');
+			               }else if(res==2){
+			            	   alert('修改失败');
+			               }else if(res==3){
+			            	   alert('您填写推荐人不存在，请重新填写！');
+			               }else{
+			            	   alert('系统错误！');
+			               }
+			            }
+			        });
+			
+		 }
+		
+</script>
+<script type="text/javascript">
+		$("#excel_borrow").click(function(){
+			var ctype=$("#ctype").val();
+			var username=$("#username").val();
+			var realname=$("#realname").val();
+			var mobile=$("#mobile").val();
+			var isTouzi=$("#isTouzi").val();
+			this.href="${admurl}/admin/member/webuserExcel.html?username="+username+"&ctype="+ctype+"&realname="+realname+"&mobile="+mobile+"&isTouzi="+isTouzi;
+		});
+	</script>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end	
+#footer()

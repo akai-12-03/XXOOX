@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="BorrowCollection">
+	<typeAlias alias="borrowCollectionAlias" type="com.dept.web.dao.model.BorrowCollection" />
+	<resultMap id="BorrowCollectionResult" class="borrowCollectionAlias">
+		<result column="id" property="id" />
+		<result column="status" property="status" />
+		<result column="col_order" property="colOrder" />
+		<result column="tender_id" property="tenderId" />
+		<result column="repay_time" property="repayTime" />
+		<result column="repay_yestime" property="repayYestime" />
+		<result column="repay_account" property="repayAccount" />
+		<result column="repay_yesaccount" property="repayYesaccount" />
+		<result column="interest" property="interest" />
+		<result column="capital" property="capital" />
+		<result column="late_days" property="lateDays" />
+		<result column="late_interest" property="lateInterest" />
+		<result column="addtime" property="addtime" />
+		<result column="addip" property="addip" />
+		<result column="updatetime" property="updatetime" />
+		<result column="updateip" property="updateip" />
+		<result column="loanNo" property="loanNo" />
+	</resultMap>
+	
+	<resultMap id="BorrowCollectionResult2" class="borrowCollectionAlias">
+		<result column="repayAccount" property="repayAccount"></result>
+		<result column="interest" property="interest"></result>
+		<result column="capital" property="capital"></result>
+	</resultMap>
+
+	<select id="GET_LIST_BY_TENDER" parameterClass="Long"
+		resultMap="BorrowCollectionResult">
+		SELECT * FROM TB_BORROW_COLLECTION WHERE TENDER_ID = #value# ORDER BY ID ASC
+	</select>
+
+	<select id="GET_LIST_BY_BORROW_FOR_REPAYMENT" parameterClass="Map"
+		resultMap="BorrowCollectionResult">
+		SELECT A.* FROM TB_BORROW_COLLECTION A, TB_BORROW_TENDER B WHERE A.TENDER_ID
+		= B.ID AND B.BORROW_ID = #bid#
+		AND a.COL_ORDER = #order#
+	</select>
+
+	<select id="GET_BY_BORROW_FOR_PERIOD" parameterClass="Map"
+		resultMap="BorrowCollectionResult">
+		SELECT * FROM TB_BORROW_COLLECTION WHERE BORROW_ID = #bid# AND STATUS =
+		#status# ORDER BY COL_ORDER ASC LIMIT 1
+	</select>
+
+	<insert id="SAVE_BORROWCOLLECTION" parameterClass="borrowCollectionAlias">
+		INSERT INTO TB_BORROW_COLLECTION(`STATUS`, COL_ORDER, TENDER_ID,
+		REPAY_TIME, REPAY_YESTIME, REPAY_ACCOUNT, REPAY_YESACCOUNT,
+		INTEREST, CAPITAL, LATE_DAYS, LATE_INTEREST, ADDTIME, ADDIP, UPDATETIME,
+		UPDATEIP)
+		VALUES(#status#,
+		#colOrder#,#tenderId#,#repayTime#,#repayYestime#,#repayAccount#,#repayYesaccount#,
+		#interest#,#capital#,#lateDays#,#lateInterest#,#addtime#,#addip#,
+		#updatetime#, #updateip#)
+		<selectKey resultClass="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<update id="UPDATE_BORROWCOLLECTION" parameterClass="borrowCollectionAlias">
+		UPDATE TB_BORROW_COLLECTION
+		<dynamic prepend="SET">
+			<isNotEmpty property="status" prepend=",">
+				`STATUS` = #status#
+			</isNotEmpty>
+			<isNotEmpty property="colOrder" prepend=",">
+				COL_ORDER = #colOrder#
+			</isNotEmpty>
+			<isNotEmpty property="tenderId" prepend=",">
+				TENDER_ID = #tenderId#
+			</isNotEmpty>
+			<isNotEmpty property="repayTime" prepend=",">
+				REPAY_TIME = #repayTime#
+			</isNotEmpty>
+			<isNotEmpty property="repayYestime" prepend=",">
+				REPAY_YESTIME = #repayYestime#
+			</isNotEmpty>
+			<isNotEmpty property="repayAccount" prepend=",">
+				REPAY_ACCOUNT = #repayAccount#
+			</isNotEmpty>
+			<isNotEmpty property="repayYesaccount" prepend=",">
+				REPAY_YESACCOUNT = #repayYesaccount#
+			</isNotEmpty>
+			<isNotEmpty property="interest" prepend=",">
+				INTEREST = #interest#
+			</isNotEmpty>
+			<isNotEmpty property="capital" prepend=",">
+				CAPITAL = #capital#
+			</isNotEmpty>
+			<isNotEmpty property="lateDays" prepend=",">
+				LATE_DAYS = #lateDays#
+			</isNotEmpty>
+			<isNotEmpty property="lateInterest" prepend=",">
+				LATE_INTEREST = #lateInterest#
+			</isNotEmpty>
+			<isNotEmpty property="addtime" prepend=",">
+				ADDTIME = #addtime#
+			</isNotEmpty>
+			<isNotEmpty property="addip" prepend=",">
+				ADDIP = #addip#
+			</isNotEmpty>
+			<isNotEmpty property="updatetime" prepend=",">
+				UPDATETIME = #updatetime#
+			</isNotEmpty>
+			<isNotEmpty property="updateip" prepend=",">
+				UPDATEIP = #updateip#
+			</isNotEmpty>
+		</dynamic>
+		WHERE ID = #id#
+	</update>
+
+	<select id="GET_LIST_BY_DATABYBORROWID" parameterClass="long" resultMap="BorrowCollectionResult2">
+		SELECT SUM(c.repay_account) as repayAccount,SUM(c.interest) as interest ,SUM(c.capital) as capital
+		FROM tb_borrow_collection c , tb_borrow_tender t
+		WHERE
+		c.tender_id = t.id
+		and t.borrow_id = #borrowId#
+		GROUP BY c.col_order ,t.borrow_id
+	</select>
+</sqlMap>

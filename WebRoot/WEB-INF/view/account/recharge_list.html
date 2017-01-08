@@ -1,0 +1,107 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li class="active">充值列表</li>
+	</ol>
+	
+	<div class="">
+		<form id="rechargeForm" name="rechargeForm" action="$admurl/admin/recharge_list.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+<!-- 		<input type="hidden" id="status" name="status" value="$!status" /> -->
+			<!-- 
+			<div class="form-inline">
+				<div class="form-group">
+					<label>用户名：</label>
+					<input type="text" class="form-control">
+				</div>
+				<div class="form-group">
+					<label>真实姓名</label>
+					<input type="text" class="form-control">
+				</div>
+			</div>
+			<br>
+			<div class="form-inline">
+				<div class="form-group">
+					<label>begin</label>
+					<input type="text" class="form-control">
+				</div>
+				<div class="form-group">
+					<label>end</label>
+					<input type="text" class="form-control">
+				</div>
+				<div class="form-group">
+					<button>button</button>
+				</div>
+			</div>
+		 -->	
+		  <div class="form-group">
+		用户名
+	      <input type="text" class="form-control" style="width: 100px" placeholder="用户名" id="username" name="username" value="$!username">
+   		订单号：
+	      <input type="text" class="form-control" style="width: 150px" placeholder="订单号" id="orderNo"name="orderNo" value="$!orderNo">
+	      真实姓名：
+	      <input type="text" class="form-control" style="width: 100px" placeholder="真实姓名" id="realname" name="realname" value="$!realname">
+	      开始时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="开始时间" id="startTime" name="startTime" value="$!startTime">	
+      	
+      	  结束时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="结束时间" id="endTime" name="endTime" value="$!endTime">	
+      	  状态:
+			<select class="form-control"  name="status" >
+			  <option #if($!status=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!status==1) selected="selected"  #end value="1" >成功</option>
+			  <option #if($!status==0) selected="selected"  #end value="0" >未支付</option>
+			  <option #if($!status==2) selected="selected"  #end value="2" >失败</option>
+			</select>
+      	  &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>
+      	  &nbsp;&nbsp;&nbsp;<a  id="excel_recharge"  class="btn btn-default"> 导出Excel</a>
+      	  </div>
+	    <br>
+	    <br>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名</th>
+					<th>真实姓名</th>
+					<th>充值金额</th>
+					<th>订单号</th>
+					<th>充值时间</th>
+					<th>状态</th>
+					<th>审核说明</th>
+<!-- 					<th>支付平台</th> -->
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($recharge in ${rechargepage.result})  
+				<tr>
+					<td>$!recharge.id</td>
+					<td>$!recharge.username</td>
+					<td>$!recharge.realname</td>
+					<td>$!recharge.moneyRecharge 元</td>
+					<td>$!recharge.orderId</td>
+					<td>$!dateTool.dateStr2($!recharge.updatedAt, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td>#if($!recharge.status==1) 成功 #elseif($!recharge.status==0) 未支付 #else 失败 #end</td>
+					<td>$!recharge.remark</td>
+<!-- 					<td>#if($!recharge.paySource=='Offline') 线下充值 #elseif($!recharge.paySource=='Deduct_Offline') 线下扣款 #elseif($!recharge.paySource=='SQ') 双乾 #elseif($!recharge.paySource=='TL') 通联 #end</td> -->
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($rechargepage 'rechargeForm')
+		
+		</form>
+	</div>
+	<script type="text/javascript">
+		$("#excel_recharge").click(function(){
+			var realname=$("#realname").val();
+			var username=$("#username").val();
+			var startTime=$("#startTime").val();
+			var endTime=$("#endTime").val();
+			var orderNo=$("#orderNo").val();
+			this.href="$admurl/admin/account_excel.html?orderNo="+orderNo+"&realname="+realname+"&username="+username+"&startTime="+startTime+"&endTime"+endTime+"&eType=cz&status=1";
+		});
+	</script>
+#footer()

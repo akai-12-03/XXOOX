@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserWithdraw" >
+  <typeAlias alias="userWithdrawAlias" type="com.dept.web.dao.model.UserWithdraw"/>
+  <resultMap id="userWithdrawResult" class="userWithdrawAlias" >
+    <result column="id" property="id"  />
+    <result column="order_id" property="orderId"  />
+    <result column="money_withdraw" property="moneyWithdraw"  />
+    <result column="remark" property="remark"  />
+    <result column="status" property="status"  />
+    <result column="created_by" property="createdBy"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="updated_by" property="updatedBy"  />
+    <result column="updated_at" property="updatedAt"  />
+    <result column="created_ip" property="createdIp"  />
+    <result column="use_card" property="useCard"  />
+  </resultMap> 
+  
+  <resultMap id="userWithdrawSearchResult" class="userWithdrawAlias" extends="userWithdrawResult">
+    <result column="username" property="username"  />
+    <result column="realname" property="realname"  />
+    <result column="updatedbyusername" property="updatedByUsername"  />
+    <result column="cardNo" property="cardNo"  />
+    <result column="cardName" property="cardName"  />
+  </resultMap>
+  
+  <resultMap id="userWithdrawByTotalResult" class="userWithdrawAlias" >
+    <result column="totalMoney" property="totalMoney"  />
+  </resultMap>
+  
+  <select id="GET_BY_ID" parameterClass="Long" resultMap="userWithdrawSearchResult">
+  	  
+  	SELECT A.*, B.USERNAME,
+	B.REALNAME, 
+	C.USERNAME AS UPDATEDBYUSERNAME ,E.bank_name as cardName,E.card_no as cardNo
+	FROM TB_USER_WITHDRAW A LEFT JOIN TB_ADMIN_USER C ON C.ID = A.UPDATED_BY, TB_USER B,tb_bank_card E WHERE A.CREATED_BY= B.ID AND A.use_card=E.id
+  	AND A.ID = #id#
+  
+  </select>
+  
+  <select id="GET_BY_ORDER_ID" parameterClass="String" resultMap="userWithdrawSearchResult">
+  	  
+  	SELECT A.*, B.USERNAME,
+	B.REALNAME, 
+	C.USERNAME AS UPDATEDBYUSERNAME ,E.bank_name as cardName,E.card_no as cardNo
+	FROM TB_USER_WITHDRAW A LEFT JOIN TB_ADMIN_USER C ON C.ID = A.UPDATED_BY, TB_USER B,tb_bank_card E WHERE A.CREATED_BY= B.ID AND A.use_card=E.id
+  	AND A.ORDER_ID = #id#
+  
+  </select>
+  
+  <select id="GET_COUNT_BY_STATUS_FOR_SEARCH" parameterClass="map"  resultClass="int">
+	  SELECT COUNT(0)  FROM TB_USER_WITHDRAW A LEFT JOIN TB_ADMIN_USER C ON C.ID = A.UPDATED_BY, TB_USER B,tb_bank_card E WHERE A.CREATED_BY= B.ID AND A.use_card=E.id
+        <isNotEmpty property="username" prepend="and">
+    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+        </isNotEmpty>
+        <isNotEmpty property="realname" prepend="and">
+    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+        </isNotEmpty>
+        <isNotEmpty property="orderId" prepend="and">
+    		A.order_id LIKE CONCAT('%', #orderId#, '%')
+        </isNotEmpty>
+	 	<isNotEmpty property="startTime" prepend="and">
+	 	    FROM_UNIXTIME(A.CREATED_BY,'%m\/%d\/%Y')>=#startTime#
+	 	</isNotEmpty>
+	 	<isNotEmpty property="endTime" prepend="and">
+	 	   <![CDATA[  
+             FROM_UNIXTIME(A.CREATED_BY,'%m\/%d\/%Y')<= #endTime#  
+           ]]> 
+	 	</isNotEmpty>
+	 	<isNotEmpty  property="status" prepend="and">
+	 		A.STATUS = #status#
+	 	</isNotEmpty>	    
+  </select>
+  
+  
+  <select id="GET_LIST_BY_STATUS_FOR_SEARCH" parameterClass="map" resultMap="userWithdrawSearchResult">
+	 SELECT A.*, B.USERNAME,
+	 B.REALNAME, 
+	C.USERNAME AS UPDATEDBYUSERNAME ,E.bank_name as cardName,E.card_no as cardNo
+	FROM TB_USER_WITHDRAW A LEFT JOIN TB_ADMIN_USER C ON C.ID = A.UPDATED_BY, TB_USER B,tb_bank_card E WHERE A.CREATED_BY= B.ID AND A.use_card=E.id
+        <isNotEmpty property="username" prepend="and">
+    		B.USERNAME LIKE CONCAT('%', #username#, '%')
+        </isNotEmpty>
+        <isNotEmpty property="realname" prepend="and">
+    		B.REALNAME LIKE CONCAT('%', #realname#, '%')
+        </isNotEmpty>
+	 	<isNotEmpty property="startTime" prepend="and">
+	 	    FROM_UNIXTIME(A.CREATED_BY,'%m\/%d\/%Y')>=#startTime#
+	 	</isNotEmpty>
+	 	<isNotEmpty property="endTime" prepend="and">
+	 	   <![CDATA[  
+             FROM_UNIXTIME(A.CREATED_BY,'%m\/%d\/%Y')<= #endTime#  
+           ]]> 
+	 	</isNotEmpty>
+	 	<isNotEmpty  property="status" prepend="and">
+	 		A.STATUS = #status#
+	 	</isNotEmpty>
+	  ORDER BY A.ID DESC
+  </select> 
+  
+  <select id="GET_BY_USER_WITHDRAW_TOTAL" parameterClass="userWithdrawAlias" resultMap="userWithdrawByTotalResult">
+		select  SUM(money_withdraw) as totalMoney from tb_user_withdraw  where status =1
+  </select>
+  
+  <update id="UPDATE_USERWITHDRAW" parameterClass="userWithdrawAlias">
+  	UPDATE TB_USER_WITHDRAW
+  	<dynamic prepend="set"> 
+  		<isNotNull property="moneyWithdraw" prepend=",">
+  			money_withdraw = #moneyWithdraw#
+  		</isNotNull>
+   		<isNotNull property="remark" prepend=",">
+  			remark = #remark#
+  		</isNotNull>
+   		<isNotNull property="status" prepend=",">
+  			`status` = #status#
+  		</isNotNull>
+   		<isNotNull property="createdBy" prepend=",">
+  			created_by = #createdBy#
+  		</isNotNull>
+   		<isNotNull property="createdAt" prepend=",">
+  			created_at = #createdAt#
+  		</isNotNull>
+   		<isNotNull property="updatedBy" prepend=",">
+  			updated_by = #updatedBy#
+  		</isNotNull>
+   		<isNotNull property="updatedAt" prepend=",">
+  			updated_at = #updatedAt#
+  		</isNotNull>
+   		<isNotNull property="createdIp" prepend=",">
+  			created_ip = #createdIp#
+  		</isNotNull>
+  		WHERE ID = #id#
+  	</dynamic>
+  </update>
+  
+  <update id="UPDATE_QDDUPDATE" parameterClass="userWithdrawAlias">
+  	UPDATE TB_USER_WITHDRAW
+  	<dynamic prepend="set"> 
+  		<isNotNull property="message" prepend=",">
+  			message = #message#
+  		</isNotNull>
+   		<isNotNull property="status" prepend=",">
+  			`status` = #status#
+  		</isNotNull>
+   		<isNotNull property="updatedAt" prepend=",">
+  			updated_at = #updatedAt#
+  		</isNotNull>
+  		WHERE ID = #id#
+  	</dynamic>
+  </update>
+</sqlMap>

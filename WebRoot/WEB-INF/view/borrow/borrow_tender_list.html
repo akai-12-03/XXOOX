@@ -1,0 +1,31 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">理财管理</a></li>
+	  <li><a href="#">产品列表</a></li>
+	  <li class="active">投标详情</li>
+	</ol>
+	<div class="">
+		  <div class="form-group">
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>投资者</th>
+					<th>投资金额</th>
+					<th>投资时间</th>				
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($tender in $tenderlist)  
+				<tr>
+					<td>$tender.username</td>
+					<td>$tender.account元</td>
+					<td>$dateTool.dateStr($!tender.addtime, 'yyyy年MM月dd日 HH:mm:ss')</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		  </div>
+	</div>
+	
+#footer()

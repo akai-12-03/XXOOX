@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Loan" >
+	<typeAlias alias="loanAlias" type="com.dept.web.dao.model.BorrowLoan"/>
+    <resultMap id="loanResult" class="loanAlias" >
+    	<result column="id" property="id"  />
+	    <result column="realname" property="realname"  />
+	    <result column="phone" property="phone"  />
+	    <result column="status" property="status" />
+	    <result column="carStatus" property="carStatus"  />
+	    <result column="verify_user" property="verifyUser" />
+	    <result column="verify_time" property="verifyTime"  />
+	    <result column="addtime" property="addtime"  />
+	    <result column="add_userid" property="addUserid"  />
+	    <result column="created_ip" property="createdIp"  />
+    </resultMap>
+   
+    <resultMap id="loanResultList" class="loanAlias" extends="loanResult">
+    	<result column="verifyName" property="verifyName"  />
+    	<result column="addName" property="addName"  />
+    </resultMap>
+   
+    <insert id="SAVE_LOAN" parameterClass="loanAlias" >
+    insert into tb_borrow_loan (realname,phone,
+      status,carStatus,verify_user, verify_time,addtime,add_userid,created_ip)
+    values (#realname#,#phone#,#status#,#carStatus#,#verifyUser#,#verifyTime#,#addtime#,#addUserid#,#createdIp#)
+  	</insert>
+  	
+  	<select id="GET_LIST_BY_LOANLIST" parameterClass="map" resultMap="loanResultList">
+  		select l.*,a.username as verifyName,u.username as addName from tb_borrow_loan l left join tb_user u on l.add_userid=u.id LEFT JOIN tb_admin_user a on a.id=l.verify_user
+  		<dynamic prepend="where">
+  		<isNotEmpty property="status" prepend="and">
+    		l.status=#status#
+        </isNotEmpty>
+        </dynamic>
+  		ORDER BY l.addtime
+  	</select>
+  	 
+  	<select id="GET_COUNT_BY_LOANLIST" parameterClass="map"  resultClass="int">
+	  select count(*) from tb_borrow_loan l left join tb_user u on l.add_userid=u.id LEFT JOIN tb_admin_user a on a.id=l.verify_user
+	  <dynamic prepend="where">
+  		<isNotEmpty property="status" prepend="and">
+    		l.status=#status#
+        </isNotEmpty>
+        </dynamic>
+  	</select>
+  	
+  	<select id="GET_BY_LOANBYID" parameterClass="long"  resultMap="loanResultList">
+	  select l.*,a.username as verifyName,u.username as addName from tb_borrow_loan l left join tb_user u on l.add_userid=u.id LEFT JOIN tb_admin_user a on a.id=l.verify_user
+	  where l.id=#value#
+  	</select>
+  	
+  	
+  	<update id="UPDATE_UPDATELOAN" parameterClass="loanAlias">
+  	UPDATE TB_BORROW_LOAN
+  	<dynamic prepend="set">
+  		<isNotNull prepend="," property="verifyUser">
+  			verify_user=#verifyUser#
+  		</isNotNull>
+  		<isNotNull prepend="," property="verifyTime">
+  			verify_time=#verifyTime#
+  		</isNotNull>
+  		<isNotNull prepend="," property="remark">
+  			remark=#remark#
+  		</isNotNull>
+  		<isNotNull prepend="," property="status">
+  			status=#status#
+  		</isNotNull>
+  	</dynamic>
+  	WHERE ID = #id#
+  </update>  
+</sqlMap>

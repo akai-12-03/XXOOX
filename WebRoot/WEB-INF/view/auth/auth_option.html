@@ -1,0 +1,163 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">权限管理</a></li>
+	  <li class="active">权限设置</li>
+	</ol>
+	
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/power/power_select.html?opt=upd&uid=$!user.id" method="post" id="passform" name="passform">
+		  <input type="hidden" id="sltstr" name="sltstr">
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">用户名:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static"><b>$!user.username</b></p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">角色code:</label>
+		    <div class="col-sm-3">
+		    	#if($!au)
+		        <p class="form-control-static" ><b>$!au.itemName</b></p>
+		        <input type="hidden" id="authcode" name="authcode" value="$!au.itemName">
+		        #else
+		        <input type="text" class="form-control" id="authcode" name="authcode" value="$!au.itemName">
+		        #end
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">角色名称:</label>
+		    <div class="col-sm-3">
+		    	#if($!au)
+		        <p class="form-control-static"><b>$!au.description</b></p>
+		        <input type="hidden" id="authDescription" name="authDescription" value="$!au.description">
+		        #else
+		        <input type="text" class="form-control" id="authDescription" name="authDescription" value="$!au.description">
+		        #end
+		    </div>
+		  </div>		  	
+		  <div style="margin-left:135px;">
+		  	 <div class="form-group" style="float:left;width:300px;">
+				<select id="fb_list" name="fb_list[]" multiple class="col-sm-3" style="width:314px; height: 500px">
+				  #foreach($auth in $!selchildlist)
+				  <option value="$!auth.child" > $!auth.description</option>
+				  #end
+				</select>
+			</div>
+			<div style="float:left; margin:20% 22px 0px 35px;">
+			   <input type="button"id="add"value=">>删除"/>
+				<input type="button"id="delete"value="<<添加"/>
+			</div>		 	
+			<div class="form-group" style="float:left; width:300px;">			
+				<select multiple class="col-sm-3" id="select_list" name="select_list" style="width:314px; height: 500px">
+				  #foreach($noauth in $!noselchildlist)
+				  <option value="$!noauth.name">$!noauth.description</option>
+				  #end
+				</select>				
+			</div>		
+		  </div>	
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="upbut">更新</button>
+		    </div>
+		  </div>			
+		</form>
+	</div>
+<script>
+/** 
+ *动态的给左边的下拉列表创建选项 
+  *具体情况可以从数据库读取数据动态创建选项 
+*/ 
+	$(function(){ 
+	     
+		$("#add").click(function(){ 
+		              
+			if($("#fb_list option:selected").length>0){ 
+		                       
+				$("#fb_list option:selected").each(function(){ 
+		                            
+					$("#select_list").append("<option value='"+$(this).val()+"'>"+$(this).text()+"</option"); 
+		 			$(this).remove();  
+		                       
+				}) 
+		              
+			}else{ 
+		                       
+				alert("请选择要添加的权限！"); 
+		             
+		 	} 
+		      
+		}) 
+	})
+	
+	$(function(){ 
+	             
+		$("#delete").click(function(){ 
+	                     
+			if($("#select_list option:selected").length>0){ 
+			                               
+				$("#select_list option:selected").each(function(){ 
+			                                          
+					$("#fb_list").append("<option value='"+$(this).val()+"'>"+$(this).text()+"</option"); 
+					$(this).remove();  
+			                               
+				}) 
+			                      
+			}else{                             
+				alert("请选择要删除的权限！");        
+			}     
+		}) 
+	})	
+	
+	$(function(){ 
+		
+		$('#upbut').click(function(){
+			
+			 selectAll(document.getElementById("fb_list"));
+			 
+			 var code = $('#authcode').val();
+			 
+			 var des = $('#authDescription').val();
+			 
+			 if(code==null||code==''){
+				 
+				 alert("请填写角色code"); 
+				 return false;
+			 }
+			 
+			 if(des==null||des==''){
+				 
+				 alert("请填写角色名称"); 
+				 return false;
+			 }			 
+			 
+			 
+			
+			$("#passform").submit();
+			return true;
+			
+		})
+	})	
+	
+	
+    function selectAll(slt){
+		
+		var sltstr ;
+	
+        for (var i=0;i<slt.options.length;i++ ){ 
+        	if(i==0){
+        		
+        		sltstr = ($(slt.options[i]).attr('value') );
+        		
+        	}else{
+        		
+        		sltstr = sltstr+","+($(slt.options[i]).attr('value') );
+        	}
+        		
+        }  
+        
+        $("#sltstr").val(sltstr);
+    } 
+</script>
+#footer()

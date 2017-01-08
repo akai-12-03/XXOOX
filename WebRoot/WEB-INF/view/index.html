@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>雄猫软件管理后台 v2.0</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/bootstrap/css/bootstrap.min.css" media="all">
+    <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/jquery-ui/themes/flick/jquery-ui.min.css" media="all">
+    <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/jquery-ui/themes/flick/theme.css" media="all">
+    <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/pace/themes/blue/pace-theme-flash.css" media="all">
+    <!-- <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/simditor/styles/font-awesome.css" media="all"> -->
+    <link rel="stylesheet" href="${admurl}${theme_dir}/rooms/simditor/styles/simditor.css" media="all">
+    <link rel='stylesheet' href='${admurl}${theme_dir}/rooms/sweetalert/sweetalert.css' media="all">
+    <link rel='stylesheet' href='${admurl}${theme_dir}/stylesheets/style.css' media="all">
+    
+    <!-- libraries -->
+    <script src="${admurl}${theme_dir}/rooms/jquery.min.js"></script>
+    <script src="${admurl}${theme_dir}/rooms/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${admurl}${theme_dir}/rooms/pace/pace.min.js"></script>
+    <script src="${admurl}${theme_dir}/rooms/jquery-ui/jquery-ui.min.js"></script>
+    <script src='${admurl}${theme_dir}/rooms/sweetalert/sweetalert.min.js'></script>
+
+    <!-- editor -->
+    <script src="${admurl}${theme_dir}/rooms/simditor/scripts/module.min.js"></script>
+    <script src="${admurl}${theme_dir}/rooms/simditor/scripts/hotkeys.min.js"></script>
+    <script src="${admurl}${theme_dir}/rooms/simditor/scripts/uploader.min.js"></script>
+    <script src="${admurl}${theme_dir}/rooms/simditor/scripts/simditor.min.js"></script>
+
+    <!-- common -->
+    <script src="${admurl}${theme_dir}/javascripts/common.js"></script> 
+	
+</head>
+<body>
+    <div class="xmsign xmcontainer panel panel-default">
+        <div class="panel-heading">登录</div>
+        <form method="post" action="${admurl}/auth.html" class="panel-body">
+            #if($!errmsg)
+            <div class="alert alert-error">$!errmsg</div>
+            #end
+
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" class="form-control" value="$!username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+			<!--  
+            <div class="form-group">
+                <label>验证码</label>
+                <div class="vi">
+                    <input type="text" name="vaildcode" requried>
+                    <img src="${admurl}/pcrimg.html" alt="">
+                    <button class="btn" type="button">刷新</button>
+                </div>
+            </div>
+            -->
+            <button class="btn btn-primary">登录</button>
+        </form>
+  </div>
+
+#footer()

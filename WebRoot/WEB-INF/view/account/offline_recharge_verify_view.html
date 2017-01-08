@@ -1,0 +1,121 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li><a href="$admurl/admin/account/charge_offline.html">线下充值</a></li>
+	  <li class="active">线下充值审核</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" id="offform" name="offform" action="$admurl/admin/account/recharge_offline_verify.html" method="post">
+		  <input type="hidden" name="status" id="status"/>
+		  <input type="hidden" name="opt" id="opt" value="ver"/>
+		  <input type="hidden" name="rid" id="rid" value="$!recharge.id"/>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!recharge.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">真实姓名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!recharge.realname</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">订单号</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!recharge.orderId</p>
+		    </div>
+		  </div>	
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">充值金额</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!recharge.moneyRecharge</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">线下充值审核说明</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="remark" name="remark">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="agree">通过</button>
+		      <button type="button" class="btn btn-primary" id="noagree">不通过</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	
+	<script type="text/javascript">
+		$("#agree").click(function(){
+			
+			swal({
+				  title: "您确定审核通过吗？",
+				  text: "线下充值金额为: "+$!recharge.moneyRecharge+ " 元",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+	
+					var remark = $('#remark').val();
+					
+					if(remark === ''){
+						
+						swal("请输入审核说明");
+						
+						return false;
+					}else{
+						
+						$("#status").val(1);
+						
+						$("#offform").submit();
+					}
+				  
+				 // 
+				});
+		});	
+		
+		$("#noagree").click(function(){
+			
+			swal({
+				  title: "您确定审核不通过吗？",
+				  text: "线下充值金额为: "+$!recharge.moneyRecharge+ " 元",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+
+					var remark = $('#remark').val();
+					
+					if(remark === ''){
+						
+						swal("请输入审核说明");
+						
+						return false;
+					}else{
+						
+						$("#status").val(2);
+						
+						$('#offform').submit();
+					}
+				  
+				 // 
+				});
+		});	
+	</script>
+	
+#footer()

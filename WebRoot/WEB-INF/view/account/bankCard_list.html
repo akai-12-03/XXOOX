@@ -1,0 +1,71 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li class="active">用户银行卡管理</li>
+	</ol>
+	
+	<div class="">
+		<form id="withForm" name="rechargeForm" action="$admurl/admin/bankCard_list.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="status" name="status" value="$!status" />
+		  <div class="form-group">
+		  用户名：
+	      <input type="text" class="form-control" style="width:120px;margin-bottom: 10px;" placeholder="用户名" id="username" name="username" value="$!username">
+	      真实姓名：
+	      <input type="text" class="form-control"  style="width:120px;margin-bottom: 10px;"placeholder="真实姓名" id="realname" name="realname" value="$!realname">
+      	  开始时间：
+      	  <input type="text" class="xmdate form-control" style="width:150px;margin-bottom: 10px;" placeholder="开始时间" id="startTime" name="startTime" value="$!startTime">	
+      	  结束时间：
+      	  <input type="text" class="xmdate form-control" style="width:150px;margin-bottom: 10px;" placeholder="结束时间" id="endTime" name="endTime" value="$!endTime">	
+      	  </div>
+      	  <button type="submit" class="btn btn-default" style="margin-bottom: 10px;">搜索</button>
+	      &nbsp;&nbsp;&nbsp;<a  id="excel_recharge" style="margin-bottom: 10px;" class="btn btn-default"> 导出Excel</a>
+	    <br>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名</th>
+					<th>真实姓名</th>
+					<th>所诉银行</th>
+					<th>银行卡</th>
+					<th>添加时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($bc in ${bankCardpage.result})  
+				<tr>
+					<td>$!bc.id</td>
+					<td>$!bc.username</td>
+					<td>$!bc.realname</td>
+					<td>$!bc.bankName</td>
+					<td>$!bc.cardNo</td>
+					<td>$dateTool.dateStr($!bc.createdAt, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td><a href="$admurl/admin/bankCard_update.html?id=$!bc.id">修改</a><!--  |
+						<a href="$admurl/admin/bankCard_update.html?type=del&id=$bc.id">删除</a> -->
+					</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($bankCardpage 'withForm')
+		
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+	<script type="text/javascript">
+		$("#excel_recharge").click(function(){
+			var realname=$("#realname").val();
+			var username=$("#username").val();
+			var startTime=$("#startTime").val();
+			var endTime=$("#endTime").val();
+			this.href="$admurl/admin/account_excel.html?realname="+realname+"&username="+username+"&startTime="+startTime+"&endTime"+endTime+"&eType=card";
+		});
+	</script>	
+#footer()

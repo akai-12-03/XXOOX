@@ -1,0 +1,186 @@
+#header()
+	<link href="${weburl}${theme_dir}/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="${weburl}${theme_dir}/umeditor/third-party/jquery.min.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="${weburl}${theme_dir}/umeditor/umeditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="${weburl}${theme_dir}/umeditor/umeditor.min.js"></script>    
+    <script type="text/javascript">
+    //实例化编辑器
+    var um = UM.getEditor('content');
+    </script>
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">理财管理</a></li>
+	  <li><a href="#">借款标列表</a></li>
+	  #if($!opt=='update' || $!opt == 'upd')
+	  <li class="active">借款标初审</li>
+	  #else
+	  <li class="active">发布借款标</li>
+	  #end
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/borrow/opborrow.html" method="post">
+		  <input type="hidden" id="opt" name="opt" value="$!opt">
+		  <input type="hidden" id="bid" name="bid" value="$!borrow.id">
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款标题</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="name" name="name" value="$!borrow.name">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款类型</label>
+		    <div class="col-sm-3">
+		      <select id="borrow_type" name="borrow_type">
+		      	<option #if($!borrow.borrowType==1) selected="selected" #end value="1">众米一号</option>
+		      	<option #if($!borrow.borrowType==2) selected="selected" #end value="2">众米二号</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款用途</label>
+		    <div class="col-sm-3">
+		      <select id="borrow_use" name="borrow_use">
+		      	<option #if($!borrow.borrowUse==1) selected="selected" #end value="1">车贷</option>
+		      	<option #if($!borrow.borrowUse==2) selected="selected" #end value="2">房贷</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">还款方式</label>
+		    <div class="col-sm-3">
+		      <select id="repayment_style" name="repayment_style">
+		      	<option #if($!borrow.borrowStyle==1) selected="selected" #end value="1">等额本息</option>
+		      	<option #if($!borrow.borrowStyle==2) selected="selected" #end value="2">到期还本还息</option>
+		      	<option #if($!borrow.borrowStyle==3) selected="selected" #end value="3">按月付息到期还本</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否天标</label>
+		    <div class="col-sm-3">
+				<label class="radio-inline">
+				  <input type="radio" name="isDay" id="day1" value="1" #if($!borrow.isDay==1) checked="checked" #end> 是
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="isDay" id="day2" value="0" #if($!borrow.isDay==0 || $borrow.isDay == '') checked="checked" #end> 不是
+				</label>
+		    </div>
+		  </div>		  		  		  		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款金额</label>
+		    <div class="col-sm-3">
+		      <input type="number" step="0.01" class="form-control" id="account" name="account" value="$!borrow.account">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">年利率</label>
+		    <div class="col-sm-3">
+		      <input type="number" step="0.01"  class="form-control" id="apr" name="apr" value="$!borrow.apr">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款期限</label>
+		    <div class="col-sm-3">
+		      <input type="number" class="form-control" id="timelimit" name="timelimit" value="$!borrow.timeLimit">
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">最低投标金额</label>
+		    <div class="col-sm-3">
+		      <input type="number" step="0.01"  class="form-control" id="lowest_account" name="lowest_account" value="$!borrow.lowestAccount">
+		    </div>
+		  </div>	
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">最高投标金额</label>
+		    <div class="col-sm-3">
+		      <input type="number" step="0.01"  class="form-control" id="most_account" name="most_account" value="$!borrow.mostAccount">
+		    </div>
+		  </div>		  	  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">有效时间</label>
+		    <div class="col-sm-3">
+		      <select id="valid_time" name="valid_time">
+		      	<option #if($!borrow.validTime==1) selected="selected" #end value="1">1天</option>
+		      	<option #if($!borrow.validTime==2) selected="selected" #end value="2">2天</option>
+		      	<option #if($!borrow.validTime==3) selected="selected" #end value="3">3天</option>
+		      	<option #if($!borrow.validTime==4) selected="selected" #end value="4">4天</option>
+		      	<option #if($!borrow.validTime==5) selected="selected" #end value="5">5天</option>
+		      	<option #if($!borrow.validTime==6) selected="selected" #end value="6">6天</option>
+		      	<option #if($!borrow.validTime==7) selected="selected" #end value="7">7天</option>	      		      	
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否有奖励</label>
+		    <div class="col-sm-3">
+				<label class="radio-inline">
+				  <input type="radio" name="award" id="awardstatus1" value="1" #if($!borrow.award==1) checked="checked" #end> 有
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="award" id="awardstatus2" value="0" checked="checked"> 没有
+				</label>
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">按固定金额奖励</label>
+		    <div class="col-sm-2">
+		      <input type="number" step="0.01"   class="form-control" id="funds" name="funds" value="$!borrow.funds">%
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">按比例奖励</label>
+		    <div class="col-sm-3">
+		      <input type="number"  step="0.01" class="form-control" id="part_account" name="part_account" value="$!borrow.partAccount">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否定向标</label>
+		    <div class="col-sm-3">
+				<label class="radio-inline">
+				  <input type="radio" name="ispwd" id="pwdstatus1" value="1" > 是
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="ispwd" id="pwdstatus2" value="0" checked="checked"> 不是
+				</label>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">定向标密码</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="pwd" name="pwd" value="$!borrow.pwd">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">信用等级</label>
+		    <div class="col-sm-3">
+		      <select id="trust_level" name="trust_level">
+		      	<option value="A">A</option>
+		      	<option value="B">B</option>
+		      	<option value="C">C</option>
+		      	<option value="D">D</option>  		      	
+		      </select>
+		    </div>
+		  </div>		  		  		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">内容</label>
+		    <div class="col-sm-3">
+				<textarea id="content" name="content" style="width:800px;height:240px;">
+	    			$!borrow.content
+				</textarea>
+		    </div>
+		  </div>		  		  
+
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-primary">创建</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+#footer()

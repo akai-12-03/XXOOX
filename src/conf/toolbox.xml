@@ -1,0 +1,30 @@
+<toolbox>
+<xhtml>true</xhtml>
+<tool>
+     <key>mathTool</key>
+     <scope>application</scope>
+     <class>org.apache.velocity.tools.generic.MathTool</class>
+</tool>
+
+<tool>
+     <key>dateTool</key>
+     <scope>application</scope>
+     <class>com.dept.web.general.util.DateUtils</class>
+</tool>
+<tool>
+     <key>statusTool</key>
+     <scope>application</scope>
+     <class>com.dept.web.general.util.StatusUtils</class>
+</tool>
+<tool>
+     <key>numberTool</key>
+     <scope>application</scope>
+     <class>com.dept.web.general.util.TextUtil</class>
+</tool>
+
+<tool>
+     <key>timeTool</key>
+     <scope>application</scope>
+     <class>com.dept.web.general.util.TimeUtil</class>
+</tool>
+</toolbox>

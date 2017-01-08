@@ -1,0 +1,19 @@
+{
+    "name": "nothing",
+
+    "devDependencies": {
+        "gulp": "*",
+        "gulp-less": "*",
+        "gulp-autoprefixer": "*",
+        "gulp-minify-css": "*",
+        "gulp-uglify": "*",
+        "gulp-seajs-transport": "*",
+        "cmd-util": "*",
+        "css-sprite": "*",
+
+        "gulp-watch": "*",
+        "gulp-clone": "*",
+        "gulp-rename": "*",
+        "gulp-plumber": "*"
+    }
+}

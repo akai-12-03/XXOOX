@@ -1,0 +1,88 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">配资管理</a></li>
+	  <li class="active">拒绝配资申请</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/plan/refuseRecord.html?opt=upd" method="post" name="recordform" id="recordform">
+		  <input type="hidden" id="pid" name="pid" value="$!pai.id" />
+		  
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label">配资类型</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">#if($!pai.planType==1) 按天配资 #elseif($!pai.planType==2) 按月配资 #elseif($!pai.planType==3) 免费体验  #end</p>
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">保证金</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.moneyInsure 元</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">配资倍比</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.power</p>
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">配资时间</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">$!pai.interval 天</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">配资利率/管理费</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">#if($!pai.planType == 1) $!pai.moneyFee 元 / 天 #elseif($!pai.planType == 2) $!pai.rate 分 / 月 #else 免费 #end</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">拒绝理由</label>
+		    <div class="col-sm-3">
+				<input type="text"  class="form-control" id="remark" name="remark" value="$!pai.opLog">
+		    </div>
+		  </div>		  	  		  
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="updbutton">拒绝</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	<script type="text/javascript">
+	
+		$("#updbutton").click(function(){
+			
+			var oplog = $("#remark").val();
+			
+			if(oplog==''){
+				
+			 	swal("请输入拒绝理由");
+			 	
+			 	return false;
+			 	
+			}else{
+				
+				swal({
+					  title: "您确定拒绝此配资申请吗？",
+					  showCancelButton: true,
+					  closeOnConfirm: false,
+					  confirmButtonText: "确认",
+					  cancelButtonText: "取消",				  
+					  animation: "slide-from-top"
+					},
+					function(inputValue){
+						
+						if (inputValue === false) return false;
+		
+						$("#recordform").submit();
+					  
+					 // 
+					});
+			}
+		
+		});
+	</script>	
+#footer()

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="PlanSetting" >
+  <typeAlias alias="planSettingAlias" type="com.dept.web.dao.model.PlanSetting"/>
+  <resultMap id="planSettingResult" class="planSettingAlias" >
+    <result column="id" property="id"  />
+    <result column="type" property="type"  />
+    <result column="power" property="power"  />
+    <result column="status" property="status"  />
+    <result column="user_create" property="userCreate"  />
+    <result column="user_operate" property="userOperate"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="updated_at" property="updatedAt"  />
+  </resultMap>
+  
+  <resultMap id="planSettingAllResult" class="planSettingAlias" extends="planSettingResult">
+  	<result column="create_name" property="createName"  />
+    <result column="operate_name" property="operateName"  />
+  </resultMap>
+
+  	<select id="GET_BY_PLANSETTING" parameterClass="planSettingAlias" resultMap="planSettingAllResult">
+  		SELECT A.*, B.USERNAME AS CREATE_NAME, C.USERNAME AS OPERATE_NAME FROM TB_PLAN_SETTING A LEFT JOIN TB_ADMIN_USER B ON A.USER_CREATE = B.ID LEFT JOIN TB_ADMIN_USER C ON A.USER_OPERATE = C.ID WHERE A.ID = #id#
+  	</select>
+
+  	<select id="GET_COUNT_BY_ALL" parameterClass="map" resultClass="int">
+  		SELECT COUNT(0) FROM TB_PLAN_SETTING A LEFT JOIN TB_ADMIN_USER B ON A.USER_CREATE = B.ID LEFT JOIN TB_ADMIN_USER C ON A.USER_OPERATE = C.ID
+  	</select>
+  	
+  	<select id="GET_LIST_BY_ALL" parameterClass="map" resultMap="planSettingAllResult">
+  		SELECT A.*, B.USERNAME AS CREATE_NAME, C.USERNAME AS OPERATE_NAME FROM TB_PLAN_SETTING A LEFT JOIN TB_ADMIN_USER B ON A.USER_CREATE = B.ID LEFT JOIN TB_ADMIN_USER C ON A.USER_OPERATE = C.ID ORDER BY ID DESC
+  	</select>
+  	
+  	<update id="UPDATE_PLANSETTING" parameterClass="planSettingAlias">
+  		UPDATE TB_PLAN_SETTING
+  		<dynamic prepend="set">
+  			<isNotNull prepend="," property="type" >
+	        	TYPE = #type#
+	        </isNotNull>
+  			<isNotNull prepend="," property="power" >
+	        	POWER = #power#
+	        </isNotNull>
+  			<isNotNull prepend="," property="status" >
+	        	STATUS = #status#
+	        </isNotNull>
+  			<isNotNull prepend="," property="userCreate" >
+	        	USER_CREATE = #userCreate#
+	        </isNotNull>
+  			<isNotNull prepend="," property="userOperate" >
+	        	USER_OPERATE = #userOperate#
+	        </isNotNull>
+  			<isNotNull prepend="," property="createdAt" >
+	        	CREATED_AT = #createdAt#
+	        </isNotNull>
+  			<isNotNull prepend="," property="updatedAt" >
+	        	UPDATED_AT = #updatedAt#
+	        </isNotNull>
+  		</dynamic>
+  		WHERE ID = #id#
+  	</update>
+  	
+  	<insert id="SAVE_PLANSETTING" parameterClass="planSettingAlias">
+  		INSERT INTO TB_PLAN_SETTING(`TYPE`, POWER, `STATUS`, USER_CREATE, USER_OPERATE, CREATED_AT, UPDATED_AT)
+  		VALUES(#type#, #power#, #status#, #userCreate#, #userOperate#, #createdAt#, #updatedAt#)
+ 		   <selectKey resultClass="long" >
+	  			SELECT LAST_INSERT_ID()
+	   	   </selectKey>
+  	</insert>
+</sqlMap>

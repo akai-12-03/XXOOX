@@ -1,0 +1,93 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li class="active">提现列表</li>
+	</ol>
+	
+	<div class="">
+		<form id="withForm" name="rechargeForm" action="$admurl/admin/withdraw_list.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		  <div class="form-group">
+		  用户名：
+	      <input type="text" class="form-control" style="width:120px;margin-bottom: 10px;" placeholder="用户名" id="username" name="username" value="$!username">
+	      真实姓名：
+	      <input type="text" class="form-control"  style="width:120px;margin-bottom: 10px;"placeholder="真实姓名" id="realname" name="realname" value="$!realname">
+      	订单号：
+	      <input type="text" class="form-control"  style="width:120px;margin-bottom: 10px;"placeholder="订单号" id="orderId" name="orderId" value="$!orderId">
+	      状态:
+			<select class="form-control"  style="width:120px;margin-bottom: 10px;" name="status" >
+			  <option #if($!status=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!status==1) selected="selected"  #end value="1" >成功</option>
+			  <option #if($!status==0) selected="selected"  #end value="0" >待审核</option>
+			  <option #if($!status==2) selected="selected"  #end value="2" >失败</option>
+			</select>
+      	  </div>
+      	  <button type="submit" class="btn btn-default" style="margin-bottom: 10px;">搜索</button>
+	      &nbsp;&nbsp;&nbsp;<a  id="excel_recharge" style="margin-bottom: 10px;" class="btn btn-default"> 导出Excel</a>
+	    <br>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名</th>
+					<th>真实姓名</th>
+					<th>提现金额</th>
+					<th>提现申请时间</th>
+					<th>审核人</th>
+					<th>审核时间</th>
+					<th>审核备注</th>
+					<th>状态</th>
+					<th>提现银行</th>
+					<th>提现银行卡</th>
+					<th>订单号</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($withdraw in ${withdrawpage.result})  
+				<tr>
+					<td>$!withdraw.id</td>
+					<td>$!withdraw.username</td>
+					<td>$!withdraw.realname</td>
+					<td>$!withdraw.moneyWithdraw 元</td>
+					<td>$!dateTool.dateStr2($!withdraw.createdAt, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td>$!withdraw.updatedByUsername</td>
+					<td>$!dateTool.dateStr2($!withdraw.updatedAt, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td>$!withdraw.remark</td>
+					<td>#if($!withdraw.status==1) 成功 
+					#elseif($!withdraw.status==0) <a href="$admurl/admin/withdraw_verify.html?wid=$!withdraw.id">待审核 </a>
+					#else 审核不通过 #end</td>
+					<td>$!withdraw.cardName</td>
+					<td>$!withdraw.cardNo</td>
+					<td>$!withdraw.orderId</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($withdrawpage 'withForm')
+		
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+	<script type="text/javascript">
+		$("#excel_recharge").click(function(){
+			var realname=$("#realname").val();
+			var username=$("#username").val();
+			var startTime=$("#startTime").val();
+			var endTime=$("#endTime").val();
+			if(startTime==undefined)
+			{
+				startTime='';
+			}
+			if(endTime==undefined)
+			{
+				endTime='';
+			}
+			this.href="$admurl/admin/account_excel.html?realname="+realname+"&username="+username+"&startTime="+startTime+"&endTime="+endTime+"&eType=tx";
+		});
+	</script>	
+#footer()

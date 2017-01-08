@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserRecommend" >
+	<typeAlias alias="userRecommendAlias" type="com.dept.web.dao.model.UserRecommend"/>
+  <resultMap id="userRecommendResult" class="userRecommendAlias" >
+    <result column="id" property="id"  />
+    <result column="userid" property="userid"  />
+    <result column="username" property="username"  />
+    <result column="mobile" property="mobile"  />
+    <result column="status" property="status"  />
+    <result column="createtime" property="createtime"  />
+    <result column="updatetime" property="updatetime"  />
+  </resultMap>
+  <resultMap id="userRecommendSearchResult" class="userRecommendAlias" extends="userRecommendResult">
+  	  <result column="uname" property="uname"  />
+   </resultMap>
+  <insert id="SAVE_USERRECOMMEND" parameterClass="userRecommendAlias" >
+  	insert into TB_USER_RECOMMEND(userid,username,mobile,status,createtime,updatetime)
+  	values
+  	(#userid#,#username#,#mobile#,#status#,#createtime#,#updatetime#)
+  	<selectKey resultClass="long" >
+	  		SELECT LAST_INSERT_ID()
+	   </selectKey>
+  </insert>
+  <select id="GET_LIST_BY_FOR_CHECKING_SEARCH"  parameterClass="map" resultMap="userRecommendSearchResult">
+       SELECT A.*, B.USERNAME AS UNAME FROM TB_USER_RECOMMEND A, TB_USER B WHERE A.USERID = B.ID 
+      	<isNotEmpty property="username" prepend="and">
+      		A.USERNAME LIKE CONCAT('%', #username#, '%')
+      	</isNotEmpty>
+   	    <isNotEmpty  property="mobile" prepend="and">
+   			A.MOBILE = #mobile#
+  	    </isNotEmpty> 
+  	    <isNotEmpty property="status" prepend="and">
+  	    	A.STATUS = #status#
+  	    </isNotEmpty>
+    </select>
+    
+    <select id="GET_COUNT_BY_FOR_CHECKING_SEARCH"  parameterClass="map" resultClass="int">
+       SELECT COUNT(0) FROM TB_USER_RECOMMEND A, TB_USER B WHERE A.USERID = B.ID 
+      	<isNotEmpty property="username" prepend="and">
+      		A.USERNAME LIKE CONCAT('%', #username#, '%')
+      	</isNotEmpty>
+   	    <isNotEmpty  property="mobile" prepend="and">
+   			A.MOBILE = #mobile#
+  	    </isNotEmpty> 
+  	    <isNotEmpty property="status" prepend="and">
+  	    	A.STATUS = #status#
+  	    </isNotEmpty>
+    </select> 
+    
+     <select id="GET_LIST_BY_UID" parameterClass="Long" resultMap="userRecommendResult">
+       SELECT * FROM TB_USER_RECOMMEND WHERE USERID =  #value#
+  </select>
+  <select id="GET_COUNT_BY_MOBILE" parameterClass="String" resultClass="int">
+       SELECT count(1) FROM TB_USER_RECOMMEND WHERE MOBILE = #value#
+  </select>
+  <update id="UPDATE_USERRECOMMEND_BY_ID" parameterClass="map">
+  	 UPDATE TB_USER_RECOMMEND SET STATUS = #status#
+  	 WHERE ID = #id#
+  </update>
+</sqlMap>

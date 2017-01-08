@@ -1,0 +1,212 @@
+#header()
+	<script type="text/javascript" src="${admurl}/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="${admurl}/kindeditor/lang/zh_CN.js"></script>
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">理财管理</a></li>
+	  <li><a href="#">产品列表</a></li>
+	  #if($!opt=='view')
+	  <li class="active">查看理财产品</li>
+	  #else
+	  <li class="active">发布理财产品</li>
+	  #end
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/borrow/opborrow.html" method="post">
+		  <input type="hidden" id="opt" name="opt" value="$!opt">
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款标题:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!borrow.name</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款类型:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!statusTool.getBorrowTypeName($!borrow.borrowType)</p>
+		    </div>
+		  </div>
+		  <div class="form-group" style="display: none" id="borrowPerson">
+				<label for="inputEmail3" class="col-sm-2 control-label">垫资标借款人</label>
+				<div class="col-sm-3">
+					<p class="form-control-static">$!borrow.mortgagor</p>
+				</div>
+			</div>
+			
+			<div class="form-group" style="display: none" id="receivePerson">
+				<label for="username" class="col-sm-2 control-label">垫资标收款人</label>
+				<div class="col-sm-3">
+					<p class="form-control-static">$!receiveUser.username</p>
+				</div>
+			</div>
+			
+			<div class="form-group" style="display: none" id="repayPerson">
+				<label for="username" class="col-sm-2 control-label">垫资标还款人</label>
+				<div class="col-sm-3">
+					<p class="form-control-static">$!repayUser.username</p>
+				</div>
+			</div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">还款方式:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!statusTool.getBorrowRepaymentStyle($!borrow.repaymentStyle)</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否天标:</label>
+		    <div class="col-sm-3">
+				<p class="form-control-static">#if($!borrow.isDay==1) 是 #else 否 #end</p>
+		    </div>
+		  </div>		  		  		  		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款金额:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!borrow.account 元</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">年利率:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!borrow.apr %</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款期限</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!borrow.timeLimit #if($!borrow.isDay==1) 天 #else 个月 #end</p>
+		    </div>
+		  </div>		  	
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">最低投标金额:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!borrow.lowestAccount 元</p>
+		    </div>
+		  </div>	
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">最高投标金额:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!borrow.mostAccount 元</p>
+		    </div>
+		  </div>		  	  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">有效时间:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!borrow.validTime 天</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否有奖励:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">#if($!borrow.award==1 ||$!borrow.award==2) 有 #else 没有 #end</p>
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">按固定金额奖励:</label>
+		    <div class="col-sm-2">
+		    	<p class="form-control-static">#if($!borrow.funds) $!borrow.funds #else 0.0  #end 元</p>
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">按比例奖励:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">#if($!borrow.partAccount)$!borrow.partAccount % #else  #end</p>
+		    </div>
+		  </div>   
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">借款手续费</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!borrow.borrow_fee %</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">推荐至首页:</label>
+		    <div class="col-sm-3">
+		    			    	<p class="form-control-static">#if($!borrow.index_status==0)否#elseif($!borrow.index_status==1)是 #end </p>
+		    </div>
+		  </div> 
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">是否可以转让:</label>
+		    <div class="col-sm-3">
+		    			    	<p class="form-control-static">#if($!borrow.isTran==0)否#elseif($!borrow.isTran==1)是 #end </p>
+		    </div>
+		  </div>   
+		     <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">债权转让手续费</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!borrow.marketFee %</p>
+		    </div>
+		  </div>	  	
+		  <div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">项目详情</label>
+				<div class="col-sm-3">
+					<textarea id="editor_id"  name="content" style="width:700px;height:300px;">$!borrow.content
+					</textarea>
+				</div>
+			</div>	
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">风险控制</label>
+				<div class="col-sm-3">
+					<textarea id="editor_id"  name="cpxq" style="width:700px;height:300px;">$!borrow.cpxq
+					</textarea>
+				</div>
+			</div>		  		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">审核信息:</label>
+		    <div class="col-sm-3">
+				$!borrow.verifyRemark
+		    </div>
+		  </div>		  		  
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+				<button type="button" class="btn btn-primary" onclick="javascript:location.href='list.html'">返回</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	<script>
+		 KindEditor.ready(function(K) {
+	   			window.editor = K.create('textarea[name="content"]', {  
+                    readonlyMode : true  
+                });
+                window.editor = K.create('textarea[name="cpxq"]', {  
+                    readonlyMode : true  
+                });   
+                window.editor = K.create('#editor_id', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                	
+                window.editor = K.create('#editor_id2', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                window.editor = K.create('#editor_id3', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                window.editor = K.create('#editor_id4', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+                window.editor = K.create('#editor_id5', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+	        });
+		
+		 $(function(){
+			 	var borrowType='$!borrow.borrowType';
+			 	if(borrowType=='1')
+			 	{
+				 	$("#borrowPerson").show();
+	     			$("#receivePerson").show();
+	     			$("#repayPerson").show();
+			 	}
+			});
+	</script>
+#footer()

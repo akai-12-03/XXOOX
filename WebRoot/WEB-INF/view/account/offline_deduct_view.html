@@ -1,0 +1,66 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li><a href="$admurl/admin/account/deduct_offline.html">线下扣款</a></li>
+	  <li class="active">添加线下扣款</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/account/deduct_offline.html?opt=add" method="post">
+		  
+		  <input type="hidden" name="uid" id="uid" value="$!account.userId"/>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!account.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">真实姓名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!account.realName</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">总金额</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!account.moneyTotal</p>
+		    </div>
+		  </div>	
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">可用金额</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!account.moneyUsable</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">提现冻结金额</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!account.moneyWithdraw</p>
+		    </div>
+		  </div>		  		  	  		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">保证金冻结金额</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!account.moneyInsure</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">线下扣款金额</label>
+		    <div class="col-sm-3">
+		      <input type="number" class="form-control" id="offline_money" name="offline_money">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="submit" class="btn btn-primary">添加线下扣款</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+#footer()

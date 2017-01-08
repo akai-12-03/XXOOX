@@ -1,0 +1,122 @@
+#header()
+	<script type="text/javascript" src="${admurl}/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="${admurl}/kindeditor/lang/zh_CN.js"></script>
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">文章管理</a></li>
+	  <li class="active">添加文章</li>
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/newsview.html" method="post">
+		  <input type="hidden" id="opt" name="opt" value="$!opt" />
+		  <input type="hidden" id="aid" name="aid" value="$!article.id" />
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">对应版块</label>
+		    <div class="col-sm-3">
+				<select class="form-control"  name="siteId" >
+				  #foreach($site in $!sitelist)
+				  <option #if($!article.siteId==$!site.id) selected="selected"  #end value="$!site.id" >$!site.name</option>
+				  #end
+				</select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">标题</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="name" name="name" value="$!article.name" />
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">简标题</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="littitle" name="littitle" value="$!article.littitle" />
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">状态</label>
+			<label class="radio-inline">
+			  <input type="radio" name="status" id="status1" value="1" #if($!article) #if($!article.status==1) checked="checked" #end #else checked="checked" #end> 启用
+			</label>
+			<label class="radio-inline">
+			  <input type="radio" name="status" id="status2" value="0" #if($!article.status==0) checked="checked" #end> 不启用
+			</label>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">来源</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="source" name="source" value="$!article.source" />
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">作者</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="author" name="author" value="$!article.author" />
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">概要</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="summary" name="summary" value="$!article.summary" />
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">内容</label>
+		    <div class="col-sm-3">
+				<textarea id="editor_id" name="content" style="width:700px;height:300px;">
+					$!article.content
+				</textarea>				
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">图片</label>
+		    <div class="col-sm-3">
+				<textarea id="editor_id1" name="litpic" style="width:700px;height:300px;">
+					#if($!article.litpic)
+					<img src="$!article.litpic" />
+					#end
+				</textarea>				
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">排行</label>
+		    <div class="col-sm-3">
+		      <input type="number" class="form-control" id="aOrder" name="aOrder" value="$!article.aorder" />
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">是否推荐</label>
+			<label class="radio-inline">
+			  <input type="radio" name="isComment" id="isComment1" value="1" #if($!article.status==1) checked="checked" #end> 是
+			</label>
+			<label class="radio-inline">
+			  <input type="radio" name="isComment" id="isComment2" value="0" #if($!article) #if($!article.status==0) checked="checked" #end #else checked="checked" #end> 否
+			</label>
+		  </div>		  		   		  
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="submit" class="btn btn-primary">添加</button>
+		    </div>
+		  </div>		  
+		</form>
+	</div>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	<script>
+	        KindEditor.ready(function(K) {
+                window.editor = K.create('#editor_id', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : true
+                	});
+	        });
+	        KindEditor.ready(function(K) {
+                window.editor = K.create('#editor_id1', {
+                        uploadJson : ROOT_URL+'/kindeditor/jsp/upload_json.jsp',
+                        fileManagerJson : ROOT_URL+'/kindeditor/jsp/file_manager_json.jsp',
+                        allowFileManager : false
+                	});
+	        });
+	        
+	</script> 	
+#footer()

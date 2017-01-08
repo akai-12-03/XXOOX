@@ -1,0 +1,100 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">融资管理</a></li>
+	  <li class="active">融资列表</li>
+	</ol>		
+	<div class="">
+		<form id="financForm" name="financForm" action="$admurl/admin/financ/financ_list.html" class="navbar-form" method="post">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<div class="form-group">
+			ID:
+		    <input type="text" class="form-control" style="width: 180px" placeholder="ID" name="id" value="$!id">
+			标题:
+		    <input type="text" class="form-control" style="width: 180px" placeholder="标题" name="name" value="$!name">
+	       	 开始时间：
+	     	<input type="text" class="xmdate form-control" style="width: 100px" placeholder="开始时间" name="startTime" value="$!startTime">	
+	     	结束时间：
+	     	<input type="text" class="xmdate form-control" style="width: 100px" placeholder="结束时间" name="endTime" value="$!endTime">
+			状态:
+			<select class="form-control"  name="status" >
+			  <option #if($!status=='') selected="selected"  #end value="" >全部</option>
+			  <option #if($!status==0) selected="selected"  #end value="0" >等待初审</option>
+			  <option #if($!status==1) selected="selected"  #end value="1" >融资中</option>
+			  <option #if($!status==2) selected="selected"  #end value="2" >审核失败</option>
+			  <option #if($!status==3) selected="selected"  #end value="3" >成功完成</option>
+			</select>
+			&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default">搜索</button>
+      	</div>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>编号</th>
+					<th>融资人</th>
+					<th>标题</th>
+					<th>金额</th>
+					<th>浏览次数</th>
+					<th>融资期限</th>
+					<th>年化率</th>
+					<th>风险评级</th>
+					<th>发布时间</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($fin in ${financingPage.result})  
+				<tr>
+					<td>$!fin.id</td>
+					<td>$!fin.username</td>
+					<td>$!fin.name</td>
+					<td>$!fin.moneyStr</td>
+					<td>$!fin.counts</td>
+					<td>$!fin.time_limit 个月</td>
+					<td>$!fin.apr%</td>
+					<td>
+						#if($!fin.risk==1)
+						R1
+						#elseif($!fin.risk==2)
+						R2
+						#elseif($!fin.risk==3)
+						R3
+						#end
+					</td>
+					<td>$!dateTool.dateStr2($!fin.addtime, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td> 
+						#if($!fin.status==0)
+							等待初审
+						#elseif($!fin.status==1)
+						融资中
+						#elseif($!fin.status==2)
+						审核失败
+						#elseif($!fin.status==3)
+						成功完成
+						#end
+					</td>
+					
+					
+					<td><a href="$admurl/admin/financ/financ_detail.html?bid=$!fin.id">详情</a>
+						#if($!fin.status==0)
+						| <a href="$admurl/admin/financ/financ_veifyF.html?bid=$!fin.id&pid=1">初审</a>
+						#elseif($!fin.status==1)
+						| <a href="$admurl/admin/financ/financ_veifyF.html?bid=$!fin.id&pid=2">审核</a>
+						#end
+					</td>
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($financingPage 'financForm')
+		</form>
+	</div>
+	
+	
+	
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end	
+#footer()

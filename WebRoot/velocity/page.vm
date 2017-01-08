@@ -1,0 +1,47 @@
+#macro(pagination $page $formname)
+
+	<script type="text/javascript" >
+
+	function formsub(page,formname){
+		$("#page").val(page);
+		$("#"+formname).submit();
+	}
+	</script>
+
+	#if($!{page.getResult().size()} >0 )
+	#set($cnn=$page.totalPage)
+	#set($cnn2=$page.totalPage )
+	#set($listnum = ($page.linkPageNumbers.size() - 1))
+	<nav class="text-center">
+		<ul class="pagination">
+		<input name="topPrevious" id="topPrevious" type="hidden" value="$page.previousPageNumber"/>
+			<li><a onclick="javascript:formsub(1, '$formname')" >首页</a></li>
+			#if($page.thisPageNumber > 1)
+			<li>
+				<a onclick="javascript:formsub($page.previousPageNumber, '$formname');"><span>&laquo;</span></a>
+			</li>
+			#else
+			<li>
+				<a href="#"><span>&laquo;</span></a>
+			</li>
+			#end
+			
+			#foreach( $linkPageNumber in [$page.linkPageNumbers.get(0)..$page.linkPageNumbers.get($listnum)] )
+			#if($linkPageNumber==$page.thisPageNumber)
+			<li class="active"><a>$linkPageNumber</a></li>
+			#else
+			<li><a onclick="javascript:formsub($!linkPageNumber,'$formname');" >$linkPageNumber</a></li>
+			#end
+			#end				
+
+			#if($page.thisPageNumber == $totalPage)
+			<li>
+				<a href="#"><span>&raquo;</span></a>
+			</li>
+			#else
+			<li><a onclick="javascript:formsub($page.nextPageNumber,'$formname');"><span>&raquo;</span></a></li>
+			#end
+		</ul>
+	</nav>	
+	#end
+#end

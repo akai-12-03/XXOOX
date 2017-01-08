@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Market" >
+  <typeAlias alias="marketAlias" type="com.dept.web.dao.model.Market"/>
+  <resultMap id="marketResult" class="marketAlias" >
+    <result column="id" property="id"  />
+    <result column="borrow_id" property="borrowId"  />
+    <result column="tender_id" property="tenderId"  />
+    <result column="tender_user_id" property="tenderUserId"  />
+    <result column="tender_Price" property="tenderPrice"  />
+    <result column="transfer_Price" property="transferPrice"  />
+    <result column="collection_Money" property="collectionMoney"  />
+    <result column="repay_Order" property="repayOrder"  />
+    <result column="repay_Total_Order" property="repayTotalOrder"  />
+    <result column="borrow_Apr" property="borrowApr"  />
+    <result column="borrow_Name" property="borrowName"  />
+    <result column="remaining_days" property="remainingDays"  />
+    <result column="status" property="status"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="created_By" property="createdBy"  />  
+    <result column="update_At" property="updateAt"  />
+    <result column="update_By" property="updateBy"  />                
+  </resultMap>
+
+  <select id="GET_LIST_BY_COMPUTER" parameterClass="Long" resultMap="marketResult">
+	   SELECT * FROM TB_MARKET WHERE `STATUS` = #status# ORDER BY ID DESC
+  </select>
+  
+  <select id="GET_COUNT_BY_COMPUTER" parameterClass="Long" resultClass="int">
+      SELECT COUNT(0) FROM TB_MARKET WHERE `STATUS` = #status#
+  </select>
+  
+  
+   <select id="GET_LIST_BY_BORROWIDANDSTATUS" parameterClass="map" resultMap="marketResult">
+	   SELECT * FROM TB_MARKET WHERE `STATUS` = #status# AND borrow_id=#borrowId# ORDER BY ID DESC
+  </select>
+	
+  <update id="UPDATE_MARKET" parameterClass="marketAlias" >
+  	UPDATE TB_MARKET
+  	<dynamic prepend="set">
+  		<isNotEmpty prepend="," property="borrowId">
+  			borrow_id = #borrowId#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="tenderId">
+  			tender_id = #tenderId#
+  		</isNotEmpty>	
+  		<isNotEmpty prepend="," property="tenderUserId">
+  			tender_user_id = #tenderUserId#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="tenderPrice">
+  			tender_Price = #tenderPrice#
+  		</isNotEmpty>	
+  		<isNotEmpty prepend="," property="transferPrice">
+  			transfer_Price = #transferPrice#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="collectionMoney">
+  			collection_Money = #collectionMoney#
+  		</isNotEmpty>	
+  		<isNotEmpty prepend="," property="repayOrder">
+  			repay_Order = #repayOrder#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="repayTotalOrder">
+  			repay_Total_Order = #repayTotalOrder#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="borrowApr">
+  			borrow_Apr = #borrowApr#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="borrowName">
+  			borrow_Name = #borrowName#
+  		</isNotEmpty>	
+  		<isNotEmpty prepend="," property="status">
+  			`STATUS` = #status#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="remainingDays">
+  			remaining_days = #remainingDays#
+  		</isNotEmpty>
+  		<isNotEmpty prepend="," property="updateAt">
+  			update_At = #updateAt#
+  		</isNotEmpty>	
+  		<isNotEmpty prepend="," property="updateBy">
+  			update_By = #updateBy#
+  		</isNotEmpty>
+  	</dynamic>
+		WHERE ID = #id#	
+	</update>
+	
+	<delete id="DELETE_MARKETID" parameterClass="Long">
+	   DELETE FROM TB_MARKET WHERE id = #id#
+	</delete>
+</sqlMap>

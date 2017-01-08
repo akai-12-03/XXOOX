@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN" ng-app>
+<head>
+	<title>{{title}}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/semantic-ui/semantic.min.css" media="all">
+	<link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/jquery-ui/themes/flick/jquery-ui.min.css" media="all">
+	<link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/jquery-ui/themes/flick/theme.css" media="all">
+	<link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/pace/themes/blue/pace-theme-flash.css" media="all">
+	<link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/simditor/styles/font-awesome.css" media="all">
+	<link rel="stylesheet" href="${admurl}/${theme_dir}/rooms/simditor/styles/simditor.css" media="all">
+	<link rel='stylesheet' href='${admurl}/${theme_dir}/stylesheets/style.css' media="all">
+</head>
+<body>
+	<div class="sidebar ui left inversted black" id="dash-sidebar">
+		<a class="item">
+			lsfjslfj
+		</a>
+	</div>
+
+	<nav class="ui top fixed menu">
+		<a class="item xmsidebar-toggle" data-target="#dash-sidebar">
+			<i class="icon dashboard xmsidebar"></i>
+			菜单
+		</a>
+		<a class="item xmmodal-toggle" data-target="#write-modal">
+			<i class="icon write"></i>
+			写写写
+		</a>
+		<a class="item" href="/dashboard/add">编写</a>
+		
+		<div class="ui pointing linkitem xmdropdown">
+			<lable class="text">Menu</label>
+			<i class="dropdown icon"></i>
+			<div class="menu">
+				<div class="item">Item 1</div>
+				<div class="item">Item 2</div>
+				
+
+			</div>
+		</div>
+		<div class="right menu">
+			<a class="item active" href="/dashboard">
+				首页
+			</a>
+			<a class="item">
+				内容
+			</a>
+			<a class="item">
+				分类
+			</a>
+			<div class="item">
+				<div class="ui transparent icon input">
+					<input type="text" placeholder="搜索所有内容">
+					<i class="icon search link"></i>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<form method="post" action="/dashboard/article/add" class="ui modal" id="write-modal">
+		<i class="close icon"></i>
+		<header class="header">
+			<i class="icon purple write"></i>
+			编写信件
+		</header>
+		<div class="content">
+			<div class="form ui">
+				<div class="field required">
+					<label>标题</label>
+					<input type="text" name="title" required>
+				</div>
+				<div class="field">
+					<label>发布日期</label>
+					<input type="text" class="xmdate" name="date" required>
+				</div>
+				<div class="field requried">
+					<label>内容</label>
+					<textarea id="editor" autofocus required name="content" hidden></textarea>
+				</div>
+			</div>
+		</div>
+
+		<footer class="actions">
+			<button type="button" class="ui black button">
+				<i class="icon remove"></i>
+				废弃
+			</button>
+			<button class="ui blue button labeled icon">
+				<i class="icon edit"></i>
+				保存
+			</button>
+		</footer>
+	</form>
+
+	<div class="pusher">
+		<div class="ui page three column grid">
+			<div class="ui column">
+				<div class="orange ui segment">
+					<h3 class="ui ribbon label orange">用户信息</h3>
+					<ul class="ui menu secondary vertical">
+						<li class="item">
+							全部信息
+							<span class="ui teal label">10</span>
+						</li>
+						<li class="item">
+							未读信息
+							<span class="ui red label">1</span>
+						</li>
+						<li class="item">
+							已读信息
+							<span class="ui label">9</span>
+						</li>
+						<li class="item">
+							已发布内容
+							<span class="ui blue label">{{{ articles.length }}}</span>
+						</li>
+						<li class="item">
+							已发布评论
+							<span class="ui blue label">3</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="ui column">
+				<div class="teal ui segment">
+					<h3 class="ui ribbon label teal">系统信息</h3>
+					{{#with sys}}
+					<ul class="ui vertical menu secondary">
+						<li class="item">
+							版本:
+							<span class="ui label red">{{{ version }}}</span>
+						</li>
+						<li class="item">
+							运行环境:
+							<span class="ui label red">express.js</span>
+						</li>
+						<li class="item">
+							数据库:
+							<span class="ui label red">mysql</span>
+						</li>
+						<li class="item">
+							模板:
+							<span class="ui label red">handlebars</span>
+						</li>
+						<li class="item">
+							授权:
+							<span class="ui label green">已授权</span>
+							<span class="ui label">未授权</span>
+						</li>
+					</ul>
+					{{/with}}
+				</div>
+			</div>
+			<div class="ui column">
+				<div class="blue ui segment blue">
+					<h3 class="ui label ribbon blue">内容信息</h3>
+					<ul class="ui menu vertical secondary">
+						<li class="item">
+							全部文章
+							<span class="ui label green">{{{ articles.length }}}</span>
+						</li>
+						<li class="item">
+							全部分类
+							<span class="ui label green">10</span>
+						</li>
+						<li class="item">
+							全部评论
+							<span class="ui label green">10</span>
+						</li>
+						<li class="item">
+							草稿
+							<span class="ui label green">1</span>
+						</li>
+						<li class="item">
+							垃圾桶
+							<span class="ui label orange">2</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="ui page two column grid">
+			<div class="ui column">
+				<div class="ui horizontal header divider">
+					最新文章
+				</div>
+				<table class="ui table celled striped">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>标题</th>
+							<th>分类</th>
+							<th>作者</th>
+							<th>发布日期</th>
+						</tr>
+					</thead>
+					{{#each articlesParials }}
+					<tr>
+						<td>{{ this.id }}</td>
+						<td>{{ this.title }}</td>
+						<td>{{ this.tag }}</td>
+						<td>{{ this.author }}</td>
+						<td>{{ this.date }}</td>
+					</tr>
+					{{/each}}
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			<div class="ui column">
+				<div class="ui horizontal header divider">
+					最新评论
+				</div>
+				<div class="ui comments segment">
+					<div class="comment">
+						<header class="content">
+							<a class="author ui label">匿名</a>
+							<div class="metadata">
+								<span class="date">一天以前</span>
+							</div>
+						</header>
+						<main class="text">
+							<p>
+								测试。
+							</p>
+						</main>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- libraries -->
+	<script src="${admurl}/${theme_dir}/rooms/jquery.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/pace/pace.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/semantic-ui/semantic.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/jquery-ui/jquery-ui.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/angular.min.js"></script>
+
+	<!-- editor -->
+	<script src="${admurl}/${theme_dir}/rooms/simditor/scripts/module.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/simditor/scripts/hotkeys.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/simditor/scripts/uploader.min.js"></script>
+	<script src="${admurl}/${theme_dir}/rooms/simditor/scripts/simditor.min.js"></script>
+
+	<!-- common -->
+	<script src="${admurl}/${theme_dir}/javascripts/common.js"></script>
+</body>
+</html>

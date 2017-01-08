@@ -1,0 +1,13 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">专题活动</a></li>
+	  <li class="active">用户推荐</li>
+	</ol>
+	<ul class="nav nav-pills">
+	  <li role="presentation" #if($!rstatus!="1") class="active" #end><a href="$admurl/admin/recommend/checking.html">审核中</a></li>
+	  <li role="presentation" #if($!rstatus=="1") class="active" #end><a href="$admurl/admin/recommend/checking.html?rstatus=1">已审核</a></li>
+	</ul>	
+	<div class="">		<form id="userForm" name="userForm" action="$admurl/admin/recommend/checking.html" class="navbar-form">		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>		<input type="hidden" id="ctype" name="ctype" value="$!ctype" />		<div class="form-group">		姓名 : <input type="text" class="form-control" placeholder="真实姓名" name="username" value="$!username">	            手机 : <input type="tel" class="form-control" placeholder="手机号" name="mobile" value="$!mobile">	      	</div>      	  <button type="submit" class="btn btn-default">查找</button>	    <br>	    <br>				<table class="table table-bordered table-hover">			<thead>				<tr>					<th>姓名</th>					<th>手机号</th>					<th>推荐人</th>					<th>推荐时间</th>					<th>操作</th>				</tr>			</thead>			<tbody>				#foreach($account in ${accountpage.result})  				<tr>					<td>$!account.username</td>					<td>$!account.mobile</td>					<td>$!account.uname</td>					<td>$dateTool.dateStr($!account.createtime, 'yyyy-MM-dd')</td>					#if($!rstatus!=="1")					<td><a href="$admurl/admin/recommend/checked.html?opt=checked&uid=$!account.id">通过</a></td>#else#end									</tr>				#end			</tbody>		</table>		#pagination($accountpage 'userForm')				</form>	</div>
+	
+#footer()

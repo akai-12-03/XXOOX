@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AuthItemChild" >
+  <typeAlias alias="authItemChildAlias" type="com.dept.web.dao.model.AuthItemChild"/>
+  <resultMap id="authItemChildResult" class="authItemChildAlias" >
+    <result column="id" property="id"  />
+    <result column="parent" property="parent"  />
+    <result column="child" property="child"  />
+    <result column="description" property="description"  />
+  </resultMap>
+  
+  <select id="GET_LIST_BY_USER" parameterClass="Long" resultMap="authItemChildResult">
+		select c.*, e.description from tb_auth_item_child c, 
+		(select b.item_name, b.description from tb_auth_assignment b, tb_admin_user a where b.user_id = a.id and a.id = #value#) e
+		where e.item_name = c.parent order by c.id desc
+  </select>
+  
+  <insert id="SAVE_AUTHITEMCHILD" parameterClass="authItemChildAlias">
+  	INSERT INTO TB_AUTH_ITEM_CHILD(PARENT, CHILD, DESCRIPTION)
+  	VALUES(#parent#, #child#, #description#)
+ 		 <selectKey resultClass="long" >
+ 			SELECT LAST_INSERT_ID()
+  	     </selectKey>
+  </insert>
+
+	<delete id="DELETE_BY_USER" parameterClass="Long">
+	   DELETE FROM TB_AUTH_ITEM_CHILD WHERE PARENT = (SELECT ITEM_NAME FROM TB_AUTH_ASSIGNMENT WHERE USER_ID = #value#)
+	</delete>
+
+</sqlMap>

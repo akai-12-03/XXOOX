@@ -1,0 +1,67 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">资金管理</a></li>
+	  <li class="active">用户资金详细记录</li>
+	</ol>
+	<ul class="nav nav-pills">
+	  <li role="presentation" class="active" ><a href="$admurl/admin/account/charge_offline.html">用户列表</a></li>
+	</ul>	
+	<div class="">
+		<form id="userAccountLog" name="userAccountLog" action="$admurl/admin/account/account_list.html" class="navbar-form">
+		<input type="hidden" id="page" name="page" #if($!page) value="$page" #else value="1" #end/>
+		<input type="hidden" id="ctype" name="ctype" value="$!ctype" />
+		<div class="form-group">
+		用户名:
+	    <input type="text" class="form-control" placeholder="用户名" name="username" value="$!username">
+	    真实姓名:
+	    <input type="text" class="form-control" placeholder="真实姓名" name="realname" value="$!realname">
+	       开始时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="开始时间" name="startTime" value="$!startTime">	
+      	  结束时间：
+      	  <input type="text" class="xmdate form-control" style="width: 100px" placeholder="结束时间" name="endTime" value="$!endTime">	
+      	</div>
+      	  <button type="submit" class="btn btn-default">搜索</button>
+	    <br>
+	    <br>		
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>用户名</th>
+					<th>真实姓名</th>
+					<th>手机号</th>
+					<th>总金额</th>
+					<th>可用金额</th>
+					<th>提现冻结金额</th>
+<!-- 					<th>用户配资保证金冻结金额</th> -->
+					<th>用户投资金额</th>
+					<th>创建时间</th>
+					<th>备注</th>
+					<!-- <th>用户配资保证金金额</th> -->
+					<!--<th>操作</th>-->
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($accoutLog in ${accountLog.result})  
+				<tr>
+					<td>$!accoutLog.username</td>
+					<td>$!accoutLog.realname</td>
+					<td>$!accoutLog.mobile</td>
+					<td>$!accoutLog.moneyTotal</td>
+					<td>$!accoutLog.moneyUsable</td>
+					<td>$!accoutLog.moneyWithdraw</td>
+<!-- 					<td>$!accoutLog.moneyInsure</td> -->
+					<td>$!accoutLog.moneyOperate</td>
+					<td>$dateTool.dateStr($!accoutLog.createdAt, 'yyyy-MM-dd HH:mm:ss')</td>
+					<td>$!accoutLog.remark</td>
+				<!-- 	<td><a href="$admurl/admin/account/charge_offline.html?opt=view&uid=$!account.userId">充值</a></td> -->
+				</tr>
+				#end
+			</tbody>
+		</table>
+		#pagination($accountLog 'userAccountLog')
+		
+		</form>
+	</div>
+	
+#footer()

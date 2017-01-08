@@ -1,0 +1,124 @@
+#header()
+
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">用户管理</a></li>
+	  <li><a href="${admurl}/admin/member/webuser.html?ctype=back">后台用户列表</a></li>
+	  #if($!ctype=='update' || $!ctype == 'upd')
+	  <li class="active">更新后台用户</li>
+	  #else
+	  <li class="active">创建后台用户</li>
+	  #end
+	</ol>
+	<div class="">
+		<form class="form-horizontal" action="$admurl/admin/member/createbackuser.html?ctype=$!ctype" method="post">
+		  
+		  #if($!ctype=='update' || $!ctype == 'upd')
+		  <input type="hidden" name="uid" id="uid" value="$!admuser.id"/>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!admuser.username</p>
+		    </div>
+		  </div>
+		  #else
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="username" name="username">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">密码</label>
+		    <div class="col-sm-3">
+		      <input type="password" class="form-control" id="password" name="password">
+		    </div>
+		  </div>
+		  #end
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+		    <div class="col-sm-3">
+		      <input type="email" class="form-control" id="email" name="email" value="$!admuser.email">
+		    </div>
+		  </div>		  
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">手机号码</label>
+		    <div class="col-sm-3">
+		      <input type="tel"  class="form-control" id="mobile" name="mobile" value="$!admuser.mobile">
+		    </div>
+		  </div>	  		  
+		  <div class="form-group">
+		    <label for="inputPassword3" class="col-sm-2 control-label">状态</label>
+			<label class="radio-inline">
+			  <input type="radio" name="status" id="status1" value="10" #if($!admuser.status==10) checked="checked" #end> 启用
+			</label>
+			<label class="radio-inline">
+			  <input type="radio" name="status" id="status2" value="0" #if($!admuser.status==0) checked="checked" #end> 不启用
+			</label>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      #if($!ctype=='update' || $!ctype == 'upd')
+		      <button type="submit" class="btn btn-primary">更新</button>
+		      <button type="button" class="btn btn-primary" id="delbtn">删除</button>
+		      #else
+		      <button type="submit" class="btn btn-primary">创建</button>
+		      #end
+		    </div>
+		  </div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		$('#delbtn').click(function(){
+		swal({
+			  title: "您确定要删除该后台用户吗？",
+			  text: "",
+			  showCancelButton: true,
+			  closeOnConfirm: false,
+			  confirmButtonText: "确认",
+			  cancelButtonText: "取消",				  
+			  animation: "slide-from-top"
+			},
+			function(inputValue){
+				
+				if (inputValue === false) return false;
+
+		        jQuery.ajax({
+		            url: ROOT_URL + "/admin/member/delAdminUser.html?opt=del&uid="+$!admuser.id,
+		            dataType: "json",
+		            success: function(res){
+		                var data = res;
+		                if(data==1){
+		        			swal({
+			      				  title: "删除成功!",
+			      				  showCancelButton: true,
+			      				  closeOnConfirm: false,
+			      				  confirmButtonText: "查看后台用户列表",
+			      				  cancelButtonText: "留在本页",				  
+			      				  animation: "slide-from-top"
+			      				},
+			      				function(inputValue){
+			    					
+			    					if (inputValue === false) return false;
+			    					
+			    					location.href = ROOT_URL + "/admin/member/webuser.html?ctype=back";//location.href实现客户端页面的跳转 
+			      				});
+		                	
+		                }else {
+		                	
+		                	swal("删除失败!");
+		                }
+		                
+		            }
+		        });
+			  
+			 // 
+			});
+		
+	})
+	</script>
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+	
+#footer()

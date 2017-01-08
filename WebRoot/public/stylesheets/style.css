@@ -1,0 +1,53 @@
+/**
+ * 颜色定义值
+ */
+.color.blue {
+  color: #3b83c0;
+}
+.color.green {
+  color: #5bbd72;
+}
+.color.orange {
+  color: #e07b53;
+}
+.color.pink {
+  color: #d9499a;
+}
+.color.purple {
+  color: #564f8a;
+}
+.color.red {
+  color: #d95c5c;
+}
+.color.teal {
+  color: #00b5ad;
+}
+.color.yellow {
+  color: #f2c61f;
+}
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+.xmsign.xmcontainer {
+  margin-top: 5%;
+}
+.xmpage {
+  padding: 3% 7%;
+}
+.xmnavfixed {
+  position: fixed;
+  background-color: rgba(86, 79, 138, 0.8);
+}
+.simditor-toolbar {
+  width: 100% !important;
+}
+.simditor-clean-paste-area {
+  display: none;
+}
+.xmcontainer{
+  width: 80%;
+  margin: 0 auto;
+}

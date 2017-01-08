@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AuthItem" >
+  <typeAlias alias="authItemAlias" type="com.dept.web.dao.model.AuthItem"/>
+  <resultMap id="authItemResult" class="authItemAlias" >
+    <result column="name" property="name"  />
+    <result column="type" property="type"  />
+    <result column="description" property="description"  />
+    <result column="rule_name" property="ruleName"  />
+    <result column="data" property="data"  />
+    <result column="created_at" property="createdAt"  />
+    <result column="updated_at" property="updatedAt"  />
+  </resultMap>
+  
+  <resultMap id="authItemSearchResult" class="authItemAlias" extends="authItemResult" >
+    <result column="username" property="username"  />
+  </resultMap>  
+  
+  <select id="GET_LIST_BY_AUTHPAGE" parameterClass="map" resultMap="authItemSearchResult">
+	SELECT C.*, E.USERNAME FROM TB_AUTH_ITEM C, 
+	
+	(SELECT B.ITEM_NAME, A.USERNAME FROM TB_AUTH_ASSIGNMENT B, TB_ADMIN_USER A WHERE B.USER_ID = A.ID) E
+	
+	 WHERE E.ITEM_NAME = C.`NAME`  
+	 
+	 ORDER BY C.CREATED_AT DESC 
+  </select>
+  
+  <select id="GET_COUNT_BY_AUTHPAGE" parameterClass="map" resultClass="int">
+	SELECT COUNT(0) FROM TB_AUTH_ITEM C, 
+	
+	(SELECT B.ITEM_NAME, A.USERNAME FROM TB_AUTH_ASSIGNMENT B, TB_ADMIN_USER A WHERE B.USER_ID = A.ID) E
+	
+	 WHERE E.ITEM_NAME = C.`NAME`
+  </select>  
+  
+  <select id="GET_LIST_BY_ALL" resultMap="authItemResult">
+  	 SELECT * FROM TB_AUTH_ITEM ORDER BY NAME ASC
+  </select>
+  
+  <select id="GET_BY_NAME" resultMap="authItemResult" parameterClass="String">
+  	 SELECT * FROM TB_AUTH_ITEM WHERE NAME = #value# LIMIT 1
+  </select>  
+</sqlMap>

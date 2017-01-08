@@ -1,0 +1,91 @@
+#header(11)
+	<div class="panel panel-primary">
+		<div class="panel-heading">系统信息</div>
+		<div class="panel-body">
+			<ul class="list-group">
+				<li class="list-group-item">
+					<span class="badge">$!osName</span>
+					操作系统:
+				</li>
+				<li class="list-group-item">
+					<span class="badge">$!osVersion</span>
+					版本:
+				</li>
+				<li class="list-group-item">
+					<span class="badge">JDK $!javaVersion</span>
+					运行环境:
+				</li>
+				<li class="list-group-item badge-info">
+					<span class="badge">MYSQL</span>
+					数据库:
+				</li>
+				<li class="list-group-item">
+					<span class="badge">已授权</span>
+					授权:
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!--  
+	<div class="panel panel-default">
+		<table class="table panel-body table-hover">
+			<thead>
+				<tr>
+					<th>Row 1</th>
+					<th>Row 2</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach($i in [0..9])
+					<tr>
+						<td>Name $i</td>
+						<td>Age $i</td>
+					</tr>
+				#end
+			</tbody>
+		</table>
+	</div>
+	-->
+	<!-- 翻页 -->
+	<!--  
+	<nav>
+		<ul class="pagination">
+			<li>
+				<a href="#"><span>&laquo;</span></a>
+			</li>
+			<li class="active"><a href="#">1</a></li>
+			<li><a href="#">2</a></li>
+			<li><a href="#">3</a></li>
+			<li>
+				<a href="#"><span>&raquo;</span></a>
+			</li>
+		</ul>
+	</nav>
+	-->
+	<!-- 选项卡 -->
+	<!--  
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#">卡1</a></li>
+		<li><a href="#">卡2</a></li>
+		<li><a href="#">卡3</a></li>
+	</ul>
+	-->
+	<!--  
+	<form>
+		<div class="form-group">
+			<label>用户名</label>
+			<input type="text" class="form-control">
+		</div>
+		-->
+		<!-- 日期控件 -->
+		<!-- 
+		<div class="form-group">
+			<label>日期</label>
+			<input type="text" class="xmdate form-control">
+		</div>
+	</form>
+	-->
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end	
+#footer()

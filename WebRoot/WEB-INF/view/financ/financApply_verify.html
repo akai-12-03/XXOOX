@@ -1,0 +1,262 @@
+#header()
+	<ol class="breadcrumb">
+	  <li><a href="$admurl/admin/welcome.html">首页</a></li>
+	  <li><a href="#">融资管理</a></li>
+	  <li><a href="#">融资列表</a></li>
+	   #if($!borrow.status == 0)
+	  <li class="active">初审</li>
+	  #elseif($!borrow.status == 1)
+	  <li class="active">审核</li>
+	  #end
+	</ol>
+	<div class="">
+		<form id="verifyForm" class="form-horizontal" action="$admurl/admin/financ/financApply_veifyF.html" method="post">
+		  <input type="hidden" id="opt" name="opt" value="upd">
+		  <input type="hidden" id="bid" name="bid" value="$!financingApply.id">
+		   <input type="hidden" id="pid" name="pid" value="$!pid">
+		  <input type="hidden" id="status" name="status">
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">标题:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!financingApply.name &nbsp;/&nbsp;$!financingApply.name</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">类型:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">#if($!financingApply.types==1)个人 #else 企业 #end</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">联系电话:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!financingApply.phone</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">融资人:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.username</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">金额:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.apply_money</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">地址:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.address</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">工作单位:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.company</p>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">工作单位联系电话:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.company_phone</p>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">年收入:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">
+		      	#if($!financingApply.year_money==1)	
+		      		小于5万 	
+		      	#elseif($!financingApply.year_money==2)
+		      		 5-10万 
+		         #elseif($!financingApply.year_money==2)
+		         	10-15 
+		         #else 
+		         	15万已下
+		         #end
+		      </p>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">住房情况:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">
+		      	#if($!financingApply.house==1)	
+		      		自有
+		      	#elseif($!financingApply.house==2)
+		      		租房
+		         #elseif($!financingApply.house==3)
+		         	与父母同住
+		         #end
+		      </p>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">申请类别:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">
+		      	#if($!financingApply.apply_type==1)	
+		      		信用卡
+		      	#elseif($!financingApply.apply_type==2)
+		      		个人消费贷款
+		        #elseif($!financingApply.apply_type==3)
+		         	个人经营贷款
+		        #elseif($!financingApply.apply_type==4)
+		         	活动资金贷款
+		        #elseif($!financingApply.apply_type==5)
+		         	经营性物业贷款
+		        #elseif($!financingApply.apply_type==6)
+		         	收益权转让
+		         #end
+		      </p>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">担保方式:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">
+		      	#if($!financingApply.apply_guarantee==1)	
+		      		房屋抵押
+		      	#elseif($!financingApply.apply_guarantee==2)
+		      		汽车抵押
+		        #elseif($!financingApply.apply_guarantee==3)
+		         	无
+		        #elseif($!financingApply.apply_guarantee==4)
+		         固定资产抵押
+		        #elseif($!financingApply.apply_guarantee==5)
+		         	第三方担保
+		        #elseif($!financingApply.apply_guarantee==6)
+		         	应收账款质押
+		         #elseif($!financingApply.apply_guarantee==7)
+		         	收益权质押
+		         #end
+		      </p>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">资金用途:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">#if($!financingApply.money_use==1)消费  #elseif($!financingApply.money_use==2) 经营 #end </p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">营业执照:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.yyzz</p>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">企业年收入额:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.company_title</p>
+		    </div>
+		  </div>
+		    <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">所属行业:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.sshy</p>
+		    </div>
+		  </div>
+		    <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">定金金额:</label>
+		    <div class="col-sm-3">
+		      <p class="form-control-static">$!financingApply.money</p>
+		    </div>
+		  </div>
+		    
+		  <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">发布时间:</label>
+		    <div class="col-sm-3">
+		    	<p class="form-control-static">$!dateTool.dateStr2($!financingApply.addtime, 'yyyy-MM-dd HH:mm:ss')</p>
+		    </div>
+		  </div>		  	    		  
+		   <div class="form-group">
+		    <label for="inputEmail3" class="col-sm-2 control-label">审核备注</label>
+		    <div class="col-sm-3">
+		      <input type="text" class="form-control" id="remark" name="remark" >
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		      <button type="button" class="btn btn-primary" id="agree">通过</button>
+		      <button type="button" class="btn btn-primary" id="noagree">不通过</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		$("#agree").click(function(){
+			
+			swal({
+				  title: "您确定审核通过吗？",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+	
+					var remark = $('#remark').val();
+					
+					if(remark === ''){
+						
+						swal("请输入审核说明");
+						
+						return false;
+					}else{
+						if($("#pid").val()=='1' || $("#pid").val()==1){
+							$("#status").val(3);
+						}else if($("#pid").val()=='2' || $("#pid").val()==2){
+							$("#status").val(4);
+						}else{
+							$("#status").val(5);
+						}
+						$("#verifyForm").submit();
+					}
+				  
+				 // 
+				});
+		});	
+		
+		$("#noagree").click(function(){
+			
+			swal({
+				  title: "您确定审核不通过吗？",
+				  showCancelButton: true,
+				  closeOnConfirm: false,
+				  confirmButtonText: "确认",
+				  cancelButtonText: "取消",				  
+				  animation: "slide-from-top"
+				},
+				function(inputValue){
+					
+					if (inputValue === false) return false;
+
+					var remark = $('#remark').val();
+					
+					if(remark === ''){
+						
+						swal("请输入审核说明");
+						
+						return false;
+					}else{
+						
+						$("#status").val(6);
+						
+						$("#verifyForm").submit();
+					}
+				  
+				 // 
+				});
+		});	
+	</script>	
+	
+	#if($!msg)
+	<script type="text/javascript">swal("$!msg")</script>
+	#end
+#footer()
